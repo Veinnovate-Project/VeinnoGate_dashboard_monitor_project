@@ -12,11 +12,14 @@
   <strong>Private prototype</strong> · <strong>English + Hebrew</strong> · <strong>Jetson edge workflow</strong> · <strong>Synthetic demo data</strong>
 </p>
 
-<p align="center">
-  <a href="https://veinnogate-dashboard-monitor-8nl3fuqje-asnin-s-projects.vercel.app/VeinnoGate%20Dashboard.dc.html"><strong>Open the protected live demo</strong></a>
-  &nbsp;·&nbsp;
-  <a href="ENGINEERING_PROTOCOL.md">Read the integration protocol</a>
-</p>
+<div align="center">
+  <h2>▶ OPEN THE LIVE INTERACTIVE DEMO</h2>
+  <p>
+    <a href="https://veinnogate-dashboard-monitor-8nl3fuqje-asnin-s-projects.vercel.app/VeinnoGate%20Dashboard.dc.html?_vercel_share=tTA0Toy4zTIukPV5uvfM7ATZUFPLTxY5"><strong>Launch the VeinnoGate Dashboard →</strong></a>
+  </p>
+  <p><sub>No Vercel account or additional sign-in is required. This private access link is intended only for approved repository collaborators.</sub></p>
+  <p><a href="ENGINEERING_PROTOCOL.md">Read the integration protocol</a></p>
+</div>
 
 ![Animated walkthrough of the VeinnoGate patient monitor dashboard](docs/assets/veinnogate-dashboard-demo.gif)
 
@@ -68,11 +71,10 @@ The dashboard communicates only with the Jetson. It does not connect directly to
 
 ## Try the live demo
 
-1. Open the **protected live demo** using the link at the top of this page.
-2. Complete the hosting access check with an approved account.
-3. On the VeinnoGate sign-in screen, choose **Continue with hospital SSO** for the synthetic demonstration.
-4. Open **Demo controls** in the lower corner.
-5. Try **Packet**, **Fail**, **Crisis** and **Disconnect** on any patient monitor.
+1. Select **Launch the VeinnoGate Dashboard** at the top of this page. No Vercel account is required.
+2. On the VeinnoGate sign-in screen, choose **Continue with hospital SSO** for the synthetic demonstration.
+3. Open **Demo controls** in the lower corner.
+4. Try **Packet**, **Fail**, **Crisis** and **Disconnect** on any patient monitor.
 
 The demo runs fully in the browser. It makes no network request to clinical infrastructure and contains no real patient data.
 
