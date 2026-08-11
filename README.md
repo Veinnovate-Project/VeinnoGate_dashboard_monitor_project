@@ -16,6 +16,7 @@
   <h2>▶ OPEN THE LIVE INTERACTIVE DEMO</h2>
   <p>
     <a href="https://veinnogate-dashboard-monitor-8nl3fuqje-asnin-s-projects.vercel.app/VeinnoGate%20Dashboard.dc.html?_vercel_share=tTA0Toy4zTIukPV5uvfM7ATZUFPLTxY5"><strong>Launch the VeinnoGate Dashboard →</strong></a>
+    <sub>(On the sign-in screen, no details are required—simply select <strong>Sign in</strong> to enter the demo.)</sub>
   </p>
   <p><sub>No Vercel account or additional sign-in is required. This private access link is intended only for approved repository collaborators.</sub></p>
   <p><a href="ENGINEERING_PROTOCOL.md">Read the integration protocol</a></p>
