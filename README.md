@@ -1,7 +1,7 @@
 # VeinnoGate Patient Monitor Dashboard
 
 <p align="center">
-  <img src="assets/veinnovate-logo.jpeg" alt="Veinnovate logo" height="150">
+  <img src="assets/veinnovate-logo.jpeg" alt="Veinnovate logo" width="400" height="200">
 </p>
 
 <p align="center">
