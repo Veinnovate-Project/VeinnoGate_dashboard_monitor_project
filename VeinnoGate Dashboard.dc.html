@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#06162C; }
+  * { box-sizing:border-box; }
+  a { color:#7FD8E0; text-decoration:none; }
+  a:hover { color:#8FE3EA; }
+  input, select, button, textarea { font-family:inherit; }
+  ::-webkit-scrollbar { width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb { background:#1E4372; border-radius:6px; }
+  ::-webkit-scrollbar-track { background:#06162C; }
+  @keyframes vnScan { 0% { transform:translateX(-100%) } 100% { transform:translateX(220%) } }
+  @keyframes vnDot { 0%,80%,100% { transform:translateY(0); opacity:.3 } 40% { transform:translateY(-5px); opacity:1 } }
+  @keyframes vnIn { from { opacity:0; transform:translateY(8px) scale(.985) } to { opacity:1; transform:none } }
+  @keyframes vnTrace { to { stroke-dashoffset:0 } }
+  @keyframes vnBlink { 0%,100% { opacity:1 } 50% { opacity:.35 } }
+  @keyframes vnSpin { to { transform:rotate(360deg) } }
+</style>
+</helmet>
+<div dir="{{ dir }}" style="min-height:100vh;background:#06162C;color:#FEFDF8;font-family:Inter, Heebo, system-ui, sans-serif;display:flex;flex-direction:column">
+
+  <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
+    <div dir="ltr" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px">
+      <div style="width:min(400px,100%);display:flex;flex-direction:column;gap:26px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+          <img src="assets/veinnovate-logo.jpeg" alt="Veinnovate" style="height:48px;width:auto;border-radius:7px;background:#FEFDF8">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="font-family:Poppins, Inter, sans-serif;font-size:20px;font-weight:600">{{ t.loginTitle }}</div>
+            <div style="font-size:13px;color:#A9BDD6;text-align:center;line-height:1.6">{{ t.loginSub }}</div>
+          </div>
+        </div>
+        <div style="background:#0F2745;border:1px solid #1E4372;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:500;color:#A9BDD6">{{ t.loginEmail }}
+            <input value="{{ login.email }}" onChange="{{ onLoginEmail }}" type="email" autocomplete="username" placeholder="name@hospital.org" style="height:46px;border-radius:10px;border:1px solid #1E4372;background:#06162C;color:#FEFDF8;padding:0 13px;font-size:14px">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:500;color:#A9BDD6">{{ t.loginPassword }}
+            <input value="{{ login.password }}" onChange="{{ onLoginPassword }}" type="password" autocomplete="current-password" placeholder="••••••••" style="height:46px;border-radius:10px;border:1px solid #1E4372;background:#06162C;color:#FEFDF8;padding:0 13px;font-size:14px;letter-spacing:.1em">
+          </label>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ onToggleRemember }}" style="{{ rememberStyle }}">
+              <span style="{{ rememberBoxStyle }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+              </span>{{ t.loginRemember }}
+            </button>
+            <div style="flex:1"></div>
+            <a href="#" style="font-size:12px">{{ t.loginForgot }}</a>
+          </div>
+          <button onClick="{{ onSignIn }}" style="{{ signInStyle }}">{{ t.loginBtn }}</button>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;height:1px;background:#1E4372"></div>
+            <span style="font-size:11px;color:#6B84A3;letter-spacing:.08em">{{ t.loginOr }}</span>
+            <div style="flex:1;height:1px;background:#1E4372"></div>
+          </div>
+          <button onClick="{{ onSsoSignIn }}" style="height:46px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:13px;font-weight:500;cursor:pointer" style-hover="border-color:#7FD8E0;color:#FEFDF8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><rect x="4" y="10.5" width="16" height="10" rx="2"></rect><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path></svg>{{ t.loginSso }}
+          </button>
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;font-size:12.5px;color:#6B84A3">
+          <span>{{ t.loginNoAccount }}</span><a href="#">{{ t.loginRegister }}</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showApp }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;min-height:100vh">
+
+      <sc-if value="{{ serverDown }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#E8735A;color:#2A0B05;font-weight:600;font-size:14px;padding:10px 22px;display:flex;align-items:center;gap:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:16px;height:16px;animation:vnSpin 1.6s linear infinite"><path d="M20 12a8 8 0 1 1-2.3-5.6"></path><path d="M20 3v5h-5"></path></svg>
+          <span>{{ t.serverDown }}</span>
+          <span style="opacity:.72;font-weight:500">{{ t.reconnecting }}</span>
+        </div>
+      </sc-if>
+
+      <header style="{{ headerStyle }}">
+        <img src="assets/veinnovate-logo.jpeg" alt="Veinnovate" style="height:34px;width:auto;border-radius:5px;background:#FEFDF8">
+        <div style="height:26px;width:1px;background:#1E4372"></div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font-family:Poppins, Inter, sans-serif;font-weight:600;font-size:15px;letter-spacing:.01em">{{ t.appTitle }}</div>
+          <div style="font-size:11.5px;color:#6B84A3;letter-spacing:.04em">{{ activeCount }}</div>
+        </div>
+        <div style="flex:1"></div>
+        <button onClick="{{ onSync }}" title="{{ t.syncTip }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#A9BDD6;font-size:13px;font-weight:500;cursor:pointer" style-hover="border-color:#7FD8E0;color:#FEFDF8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px"><path d="M20 12a8 8 0 1 1-2.3-5.6"></path><path d="M20 3v5h-5"></path></svg><span>{{ t.sync }}</span>
+        </button>
+        <button onClick="{{ onManualOpen }}" style="display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:10px;border:1px solid #7FD8E0;background:rgba(127,216,224,.1);color:#7FD8E0;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:rgba(127,216,224,.2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:15px;height:15px"><path d="M12 5v14M5 12h14"></path></svg><span>{{ t.manualOpen }}</span>
+        </button>
+        <button onClick="{{ onToggleMute }}" title="{{ t.muteTip }}" style="{{ muteStyle }}">
+          <sc-if value="{{ soundOn }}" hint-placeholder-val="{{ true }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"></path><path d="M16 9.5a4 4 0 0 1 0 5"></path><path d="M18.5 7a7.5 7.5 0 0 1 0 10"></path></svg>
+          </sc-if>
+          <sc-if value="{{ soundOff }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"></path><path d="M16 9.5l4.5 5"></path><path d="M20.5 9.5l-4.5 5"></path></svg>
+          </sc-if>
+        </button>
+        <div style="display:flex;height:44px;border-radius:10px;border:1px solid #1E4372;overflow:hidden">
+          <button onClick="{{ onEN }}" style="{{ enBtn }}">EN</button>
+          <button onClick="{{ onHE }}" style="{{ heBtn }}">עב</button>
+        </div>
+        <div style="display:flex;align-items:center;height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;overflow:hidden">
+          <button onClick="{{ onOpenHandover }}" title="{{ t.handoverTip }}" style="display:flex;align-items:center;gap:10px;height:100%;padding:0 13px;border:none;background:transparent;color:#A9BDD6;cursor:pointer;text-align:start" style-hover="background:rgba(127,216,224,.08);color:#FEFDF8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex:none"><path d="M4 8h13l-3-3"></path><path d="M20 16H7l3 3"></path></svg>
+            <span style="display:flex;flex-direction:column;gap:1px;line-height:1.15">
+              <span style="font-size:10.5px;letter-spacing:.04em;color:#6B84A3">{{ shiftLabel }}</span>
+              <span style="font-size:12.5px;font-weight:600;color:#FEFDF8;white-space:nowrap">{{ shiftCharge }}</span>
+            </span>
+          </button>
+          <div style="width:1px;height:26px;background:#1E4372;flex:none"></div>
+          <button onClick="{{ onSignOut }}" title="{{ t.signOut }}" style="width:40px;height:100%;display:grid;place-items:center;border:none;background:transparent;color:#6B84A3;cursor:pointer" style-hover="color:#E8735A">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M15 4h4v16h-4"></path><path d="M10 8l-4 4 4 4"></path><path d="M6 12h9"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <main style="{{ mainStyle }}">
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center">
+            <svg viewBox="0 0 320 60" style="width:300px;height:56px;opacity:.55">
+              <path d="M0 34 H108 L118 34 L128 10 L140 54 L150 26 L158 34 H320" fill="none" stroke="#7FD8E0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="520" stroke-dashoffset="520" style="animation:vnTrace 2.4s ease-out forwards"></path>
+            </svg>
+            <div style="font-family:Poppins, Inter, sans-serif;font-size:22px;font-weight:600">{{ t.emptyTitle }}</div>
+            <div style="max-width:460px;font-size:14px;line-height:1.6;color:#A9BDD6">{{ t.emptyBody }}</div>
+            <div style="display:flex;gap:12px;margin-top:6px">
+              <button onClick="{{ onSync }}" style="height:44px;padding:0 20px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#A9BDD6;font-size:13px;font-weight:500;cursor:pointer">{{ t.sync }}</button>
+              <button onClick="{{ onManualOpen }}" style="height:44px;padding:0 20px;border-radius:10px;border:1px solid #7FD8E0;background:rgba(127,216,224,.12);color:#7FD8E0;font-size:13px;font-weight:600;cursor:pointer">{{ t.manualOpen }}</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:16px;align-content:start">
+          <sc-for list="{{ tiles }}" as="tile" hint-placeholder-count="8">
+            <div style="{{ tile.cardStyle }}">
+              <div style="position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;background:{{ tile.accent }}"></div>
+
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                  <div style="display:flex;align-items:baseline;gap:8px;min-width:0">
+                    <div style="font-family:Poppins, Inter, sans-serif;font-size:16px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ tile.name }}</div>
+                    <sc-if value="{{ tile.hasId }}" hint-placeholder-val="{{ true }}">
+                      <div dir="ltr" title="{{ t.fId }}" style="flex:none;font-size:11px;font-weight:600;color:#A9BDD6;background:rgba(127,216,224,.07);border:1px solid #1E4372;border-radius:5px;padding:2px 7px;letter-spacing:.06em;font-variant-numeric:tabular-nums;unicode-bidi:isolate">{{ tile.nationalId }}</div>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:12px;color:#6B84A3;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:isolate">{{ tile.sub }}</div>
+                </div>
+                <div style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                  <div style="{{ tile.pillStyle }}">
+                    <span style="{{ tile.dotStyle }}"></span>{{ tile.stateLabel }}
+                  </div>
+                  <sc-if value="{{ tile.showNews }}" hint-placeholder-val="{{ true }}">
+                    <div title="{{ t.newsTip }}" style="{{ tile.newsStyle }}">
+                      <span style="font-size:9px;font-weight:700;letter-spacing:.12em;opacity:.7">{{ t.newsLabel }}</span>
+                      <span style="font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums">{{ tile.newsScore }}</span>
+                      <span style="font-size:9.5px;font-weight:600;letter-spacing:.04em;opacity:.85">{{ tile.newsTier }}</span>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+
+              <sc-if value="{{ tile.needsForm }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;padding:6px 0">
+                  <div style="font-size:13px;color:#A9BDD6;line-height:1.55">{{ t.identifyPrompt }}</div>
+                  <button onClick="{{ tile.onEdit }}" style="height:44px;padding:0 18px;border-radius:10px;border:1px solid #7FD8E0;background:rgba(127,216,224,.12);color:#7FD8E0;font-size:13px;font-weight:600;cursor:pointer">{{ t.identify }}</button>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ tile.showMetrics }}" hint-placeholder-val="{{ true }}">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;align-content:center">
+                  <div style="display:flex;flex-direction:column;gap:1px">
+                    <div style="display:flex;align-items:center;gap:5px;color:#6B84A3">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#7FD8E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M12 20.5S3.8 15.6 3.8 10.2A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 8.2 2.2c0 5.4-8.2 10.3-8.2 10.3z"></path></svg>
+                      <span style="font-size:10.5px;font-weight:700;letter-spacing:.16em">HR</span>
+                    </div>
+                    <div style="{{ tile.hrStyle }}">{{ tile.hr }}</div>
+                    <div style="font-size:11px;color:#6B84A3;letter-spacing:.06em">BPM</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:1px">
+                    <div style="display:flex;align-items:center;gap:5px;color:#6B84A3">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#6FE3C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg>
+                      <span style="font-size:10.5px;font-weight:700;letter-spacing:.16em">SpO₂</span>
+                    </div>
+                    <div style="{{ tile.spo2Style }}">{{ tile.spo2 }}</div>
+                    <div style="font-size:11px;color:#6B84A3;letter-spacing:.06em">%</div>
+                  </div>
+                  <div style="grid-column:1 / -1;border-top:1px solid #1E4372;padding-top:11px;display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#6B84A3">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#F5C56B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;min-width:14px;flex:0 0 auto;display:block;overflow:visible"><circle cx="12" cy="12" r="7.5"></circle><path d="M12 12l3.6-2.7"></path></svg>
+                      <span style="font-size:10.5px;font-weight:700;letter-spacing:.16em">ABP</span>
+                      <div title="{{ t.predictedTip }}" style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F5C56B;border:1px solid rgba(245,197,107,.45);border-radius:4px;padding:2px 6px;cursor:help">{{ t.predicted }}</div>
+                    </div>
+                    <sc-if value="{{ tile.abpComputing }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;flex-direction:column;gap:7px;padding-top:4px">
+                        <div style="display:flex;align-items:center;gap:10px">
+                          <div style="display:flex;gap:5px;align-items:flex-end;height:16px">
+                            <span style="width:6px;height:6px;border-radius:50%;background:#F5C56B;animation:vnDot 1.05s infinite"></span>
+                            <span style="width:6px;height:6px;border-radius:50%;background:#F5C56B;animation:vnDot 1.05s .16s infinite"></span>
+                            <span style="width:6px;height:6px;border-radius:50%;background:#F5C56B;animation:vnDot 1.05s .32s infinite"></span>
+                          </div>
+                          <div style="font-size:12.5px;color:#F5C56B;font-weight:500">{{ t.computing }}</div>
+                        </div>
+                        <div style="height:3px;border-radius:2px;background:rgba(245,197,107,.16);overflow:hidden">
+                          <div style="width:40%;height:100%;border-radius:2px;background:linear-gradient(90deg, rgba(245,197,107,0), #F5C56B, rgba(245,197,107,0));animation:vnScan 1.35s ease-in-out infinite"></div>
+                        </div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ tile.abpFailed }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:baseline;gap:10px">
+                        <div style="font-size:34px;line-height:1.05;font-weight:600;color:#3C5A80;font-variant-numeric:tabular-nums">—</div>
+                        <div style="font-size:12px;color:#A9BDD6">{{ t.predFailed }}</div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ tile.abpValue }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;align-items:baseline;gap:8px">
+                        <div style="{{ tile.abpStyle }}">{{ tile.abp }}</div>
+                        <div style="font-size:11px;color:#6B84A3;letter-spacing:.06em">mmHg</div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ tile.showAlert }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ tile.alertBoxStyle }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="{{ tile.alertColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:none"><path d="M12 4l9 16H3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;line-height:1.35">
+                    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+                      <span style="{{ tile.alertTitleStyle }}">{{ tile.alertTitle }}</span>
+                      <sc-if value="{{ tile.showAlarmAge }}" hint-placeholder-val="{{ false }}">
+                        <span style="{{ tile.alarmAgeStyle }}">{{ tile.alarmAge }}</span>
+                      </sc-if>
+                    </div>
+                    <span style="font-size:11.5px;color:#A9BDD6">{{ tile.alertDetail }}</span>
+                  </div>
+                  <button onClick="{{ tile.onAck }}" style="{{ tile.alertAckStyle }}">{{ t.alertAck }}</button>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ tile.showWaiting }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:10px;border:1px dashed #1E4372;border-radius:10px;padding:9px 11px">
+                  <div style="display:flex;gap:4px;align-items:flex-end;height:12px">
+                    <span style="width:5px;height:5px;border-radius:50%;background:#7FD8E0;animation:vnDot 1.05s infinite"></span>
+                    <span style="width:5px;height:5px;border-radius:50%;background:#7FD8E0;animation:vnDot 1.05s .16s infinite"></span>
+                    <span style="width:5px;height:5px;border-radius:50%;background:#7FD8E0;animation:vnDot 1.05s .32s infinite"></span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:2px;line-height:1.3">
+                    <span style="font-size:12px;font-weight:600;color:#A9BDD6">{{ t.waitingTitle }}</span>
+                    <span style="font-size:10.5px;color:#6B84A3">{{ t.waitingSub }}</span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ tile.showDiscBanner }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:9px;border:1px solid rgba(232,115,90,.35);background:rgba(232,115,90,.1);border-radius:10px;padding:9px 11px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#E8735A" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px"><path d="M2 3l20 20"></path><path d="M5 12.5a11 11 0 0 1 4-2.4"></path><path d="M8.5 16a6 6 0 0 1 3-1.6"></path><path d="M12 20h.01"></path><path d="M19.5 12.5a11 11 0 0 0-6-3"></path></svg>
+                  <span style="font-size:12px;font-weight:600;color:#E8735A">{{ t.discBanner }}</span>
+                </div>
+              </sc-if>
+
+              <div style="flex:1"></div>
+
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #1E4372;padding-top:11px">
+                <div style="font-size:11.5px;color:#6B84A3;font-variant-numeric:tabular-nums">{{ tile.stamp }}</div>
+                <sc-if value="{{ tile.partial }}" hint-placeholder-val="{{ false }}">
+                  <div title="{{ t.partialTip }}" style="font-size:10.5px;color:#F5C56B;border:1px solid rgba(245,197,107,.4);border-radius:5px;padding:2px 7px;cursor:help">{{ t.partial }}</div>
+                </sc-if>
+                <div style="flex:1"></div>
+                <div style="display:flex;align-items:center;gap:10px;color:#6B84A3">
+                  <div title="{{ tile.rssiTip }}" style="display:flex;align-items:center;gap:4px;cursor:help">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><path d="M2.5 9a15 15 0 0 1 19 0"></path><path d="M5.5 12.5a10 10 0 0 1 13 0"></path><path d="M8.5 16a5.5 5.5 0 0 1 7 0"></path><path d="M12 19.5h.01"></path></svg>
+                    <span dir="ltr" style="font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums;unicode-bidi:isolate">{{ tile.rssi }}</span>
+                  </div>
+                  <div title="{{ t.batteryTip }}" style="display:flex;align-items:center;gap:4px;cursor:help">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><rect x="2" y="8" width="16" height="9" rx="2"></rect><path d="M21 11v3"></path></svg>
+                    <span dir="ltr" style="font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums;unicode-bidi:isolate">{{ tile.battery }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:8px">
+                <sc-if value="{{ tile.showEdit }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ tile.onEdit }}" title="{{ t.edit }}" style="flex:1;height:38px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:12px;font-weight:500;cursor:pointer" style-hover="border-color:#7FD8E0;color:#FEFDF8">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M4 20h4L20 8l-4-4L4 16z"></path></svg>{{ t.edit }}
+                  </button>
+                </sc-if>
+                <sc-if value="{{ tile.needsForm }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:1"></div>
+                </sc-if>
+                <button onClick="{{ tile.onAudit }}" title="{{ t.audit }}" style="width:44px;height:38px;display:grid;place-items:center;border-radius:9px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;cursor:pointer" style-hover="border-color:#7FD8E0;color:#FEFDF8">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"></path><path d="M3 4v5h5"></path><path d="M12 8v4.5l3 1.8"></path></svg>
+                </button>
+                <button onClick="{{ tile.onDischarge }}" title="{{ t.discharge }}" style="width:44px;height:38px;display:grid;place-items:center;border-radius:9px;border:1px solid #1E4372;background:transparent;color:#6B84A3;cursor:pointer" style-hover="border-color:#E8735A;color:#E8735A">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+              </div>
+
+              <sc-if value="{{ tile.closing }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;inset:0;z-index:5;background:rgba(6,22,44,.9);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;animation:vnIn .2s ease-out">
+                  <div style="font-size:14px;font-weight:600">{{ t.undoTitle }}</div>
+                  <div style="display:flex;align-items:baseline;gap:7px">
+                    <span style="font-size:32px;font-weight:700;color:#F5C56B;font-variant-numeric:tabular-nums">{{ tile.undoLeft }}</span>
+                    <span style="font-size:12px;color:#A9BDD6">{{ t.undoSeconds }}</span>
+                  </div>
+                  <button onClick="{{ tile.onUndo }}" style="height:42px;padding:0 20px;display:flex;align-items:center;gap:8px;border-radius:10px;border:1px solid #7FD8E0;background:rgba(127,216,224,.12);color:#7FD8E0;font-size:13px;font-weight:600;cursor:pointer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"></path><path d="M3 4v5h5"></path></svg>{{ t.undo }}
+                  </button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </main>
+
+      <div style="{{ demoStyle }}">
+        <div style="flex:none;display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #1E4372">
+          <span style="width:7px;height:7px;border-radius:50%;background:#F5C56B"></span>
+          <div style="font-family:Poppins, Inter, sans-serif;font-size:13px;font-weight:600;letter-spacing:.02em">{{ t.demoTitle }}</div>
+          <div style="flex:1"></div>
+          <button onClick="{{ onToggleDemo }}" style="width:28px;height:28px;display:grid;place-items:center;border-radius:7px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;cursor:pointer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+          </button>
+        </div>
+        <div style="flex:1;min-height:0;padding:14px 16px;display:flex;flex-direction:column;gap:9px;overflow:auto">
+          <div style="flex:none;font-size:10.5px;letter-spacing:.14em;color:#6B84A3;font-weight:700">{{ t.demoGlobal }}</div>
+          <button onClick="{{ onNewAdapter }}" style="flex:none;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;border:1px solid #7FD8E0;background:rgba(127,216,224,.12);color:#7FD8E0;font-size:12.5px;font-weight:600;cursor:pointer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex:none"><path d="M12 4v8"></path><path d="M7.5 7a7 7 0 1 0 9 0"></path></svg>{{ t.demoNew }}
+          </button>
+          <button onClick="{{ onToggleServer }}" style="flex:none;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;border:1px solid #1E4372;background:#0F2745;color:#A9BDD6;font-size:12.5px;font-weight:500;cursor:pointer">{{ t.demoServer }}</button>
+          <button onClick="{{ onReset }}" style="flex:none;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;border:1px solid #1E4372;background:#0F2745;color:#A9BDD6;font-size:12.5px;font-weight:500;cursor:pointer">{{ t.demoReset }}</button>
+          <div style="flex:none;height:1px;background:#1E4372;margin:6px 0"></div>
+          <div style="flex:none;font-size:10.5px;letter-spacing:.14em;color:#6B84A3;font-weight:700">{{ t.demoPer }}</div>
+          <sc-for list="{{ demoRows }}" as="row" hint-placeholder-count="4">
+            <div style="flex:none;border:1px solid #1E4372;border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:7px">
+              <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ row.name }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <button onClick="{{ row.onPacket }}" style="{{ row.packetStyle }}">{{ t.demoPacket }}</button>
+                <button onClick="{{ row.onFail }}" style="{{ row.failStyle }}">{{ t.demoFail }}</button>
+                <button onClick="{{ row.onCrisis }}" style="{{ row.crisisStyle }}">{{ t.demoCrisis }}</button>
+                <button onClick="{{ row.onToggleConn }}" style="flex:1 1 auto;min-width:max-content;height:32px;padding:0 9px;border-radius:7px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:10.5px;font-weight:600;white-space:nowrap;cursor:pointer">{{ row.connLabel }}</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ demoClosed }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ onToggleDemo }}" style="position:fixed;bottom:18px;inset-inline-end:18px;height:44px;padding:0 16px;border-radius:22px;border:1px solid #F5C56B;background:rgba(245,197,107,.14);color:#F5C56B;font-size:12.5px;font-weight:600;cursor:pointer;z-index:30">{{ t.demoTitle }}</button>
+      </sc-if>
+
+      <sc-if value="{{ showManual }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;background:rgba(3,10,22,.7);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px">
+          <div style="width:min(460px,100%);background:#16345C;border:1px solid #1E4372;border-radius:16px;animation:vnIn .22s ease-out">
+            <div style="padding:20px 24px;border-bottom:1px solid #1E4372;display:flex;align-items:center;gap:12px">
+              <div style="flex:1">
+                <div style="font-family:Poppins, Inter, sans-serif;font-size:17px;font-weight:600">{{ t.manualTitle }}</div>
+                <div style="font-size:12px;color:#A9BDD6;margin-top:3px;line-height:1.5">{{ t.manualBody }}</div>
+              </div>
+              <button onClick="{{ onCloseModal }}" style="width:36px;height:36px;display:grid;place-items:center;border-radius:9px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;cursor:pointer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </button>
+            </div>
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+              <div style="font-size:11px;letter-spacing:.14em;color:#6B84A3;font-weight:700">{{ t.manualAvailable }}</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ manualRows }}" as="row" hint-placeholder-count="3">
+                  <button onClick="{{ row.onPick }}" style="{{ row.style }}">
+                    <span dir="ltr" style="font-variant-numeric:tabular-nums;letter-spacing:.06em;unicode-bidi:isolate">{{ row.id }}</span>
+                    <span style="font-size:11px;opacity:.7">{{ row.meta }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding:16px 24px;border-top:1px solid #1E4372;display:flex;gap:10px;align-items:center">
+              <button onClick="{{ onSpawnFromManual }}" style="height:44px;padding:0 16px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:12.5px;cursor:pointer">{{ t.manualSpawn }}</button>
+              <div style="flex:1"></div>
+              <button onClick="{{ onCloseModal }}" style="height:44px;padding:0 18px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:13px;cursor:pointer">{{ t.cancel }}</button>
+              <button onClick="{{ onConfirmManual }}" style="{{ manualBtnStyle }}">{{ t.manualOpen }}</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showHandover }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;background:rgba(3,10,22,.72);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px">
+          <div style="width:min(460px,100%);background:#16345C;border:1px solid #1E4372;border-radius:16px;animation:vnIn .22s ease-out">
+            <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+              <div style="font-family:Poppins, Inter, sans-serif;font-size:17px;font-weight:600">{{ t.handoverTitle }}</div>
+              <div style="font-size:13px;color:#A9BDD6;line-height:1.65">{{ t.handoverBody }}</div>
+              <div style="display:flex;align-items:center;gap:10px;background:#0F2745;border:1px solid #1E4372;border-radius:9px;padding:10px 12px">
+                <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:11px;color:#6B84A3;letter-spacing:.02em">{{ t.handoverCurrent }}</span>
+                  <span style="font-size:13.5px;font-weight:600">{{ shiftCharge }}</span>
+                </div>
+                <span style="font-size:11.5px;color:#6B84A3;font-variant-numeric:tabular-nums">{{ handoverSince }}</span>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#A9BDD6">{{ t.handoverNew }}
+                <input value="{{ handoverName }}" onChange="{{ onHandoverName }}" placeholder="{{ t.handoverNewPh }}" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px">
+              </label>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <span style="font-size:12px;color:#A9BDD6">{{ t.handoverShift }}</span>
+                <div style="display:flex;gap:7px;flex-wrap:wrap">
+                  <sc-for list="{{ shiftOpts }}" as="opt" hint-placeholder-count="3">
+                    <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <div style="padding:16px 24px;border-top:1px solid #1E4372;display:flex;gap:10px">
+              <div style="flex:1"></div>
+              <button onClick="{{ onCloseModal }}" style="height:44px;padding:0 18px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:13px;cursor:pointer">{{ t.cancel }}</button>
+              <button onClick="{{ onConfirmHandover }}" style="{{ handoverBtnStyle }}">{{ t.handoverConfirm }}</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showForm }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;background:rgba(3,10,22,.7);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px">
+          <div style="width:min(620px,100%);max-height:88vh;overflow:auto;background:#16345C;border:1px solid #1E4372;border-radius:16px;animation:vnIn .22s ease-out">
+            <div style="padding:20px 24px 14px;border-bottom:1px solid #1E4372;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;background:#16345C;z-index:2">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="flex:1">
+                  <div style="font-family:Poppins, Inter, sans-serif;font-size:17px;font-weight:600">{{ formTitle }}</div>
+                  <div style="font-size:12px;color:#A9BDD6;margin-top:3px">{{ formAdapter }}</div>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <span style="{{ step1Dot }}"></span><span style="{{ step2Dot }}"></span>
+                </div>
+                <button onClick="{{ onCloseModal }}" style="width:36px;height:36px;display:grid;place-items:center;border-radius:9px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;cursor:pointer">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                <span style="font-size:11px;color:#6B84A3;letter-spacing:.02em">{{ t.recordedBy }}</span>
+                <input value="{{ form.recordedBy }}" onChange="{{ onRecordedBy }}" style="height:32px;min-width:170px;border-radius:8px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 11px;font-size:12.5px">
+                <sc-if value="{{ showShiftNote }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:11px;color:#6B84A3">{{ shiftNote }}</span>
+                </sc-if>
+              </div>
+            </div>
+
+            <sc-if value="{{ showStepId }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="font-size:12.5px;color:#A9BDD6;line-height:1.6">{{ t.step1Sub }}</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+                  <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#A9BDD6">{{ t.fName }}
+                    <input value="{{ form.name }}" onChange="{{ onName }}" placeholder="{{ t.fNamePh }}" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px">
+                  </label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#A9BDD6" title="{{ t.fIdTip }}">{{ t.fId }}
+                    <input value="{{ form.nationalId }}" onChange="{{ onNationalId }}" placeholder="{{ t.fIdPh }}" dir="ltr" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.04em">
+                  </label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#A9BDD6">{{ t.fDept }}
+                    <input value="{{ form.department }}" onChange="{{ onDept }}" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px">
+                  </label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#A9BDD6">{{ t.fBed }}
+                    <input value="{{ form.bed }}" onChange="{{ onBed }}" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px">
+                  </label>
+                </div>
+              </div>
+              <div style="padding:16px 24px;border-top:1px solid #1E4372;display:flex;gap:10px;align-items:center">
+                <div style="flex:1;font-size:11.5px;color:#F5C56B;line-height:1.4">{{ requiredMsg }}</div>
+                <button onClick="{{ onCloseModal }}" style="height:44px;padding:0 18px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:13px;cursor:pointer">{{ t.cancel }}</button>
+                <button onClick="{{ onNextStep }}" style="{{ nextBtnStyle }}">{{ t.next }}</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showStepDemo }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:22px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="font-size:12.5px;color:#A9BDD6;line-height:1.6">{{ t.demoNote }}</div>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#FEFDF8;max-width:220px" title="{{ t.fAgeTip }}">{{ t.fAge }}
+                  <input value="{{ form.age }}" onChange="{{ onAge }}" placeholder="18–120" dir="ltr" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums">
+                </label>
+                <sc-if value="{{ hasAgeError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:11.5px;color:#F5C56B;margin-top:-10px">{{ ageError }}</div>
+                </sc-if>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <sc-for list="{{ rows }}" as="row" hint-placeholder-count="8">
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                      <div style="flex:1;min-width:190px;font-size:13px;color:#FEFDF8;line-height:1.4">{{ row.label }}</div>
+                      <div style="display:flex;gap:6px">
+                        <sc-for list="{{ row.opts }}" as="opt" hint-placeholder-count="3">
+                          <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-size:11.5px;color:#6B84A3;line-height:1.6;border:1px solid #1E4372;border-radius:10px;padding:11px 13px">{{ t.formFooterNote }}</div>
+              </div>
+              <div style="padding:16px 24px;border-top:1px solid #1E4372;display:flex;gap:10px;align-items:center">
+                <button onClick="{{ onBackStep }}" style="height:44px;padding:0 16px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:13px;cursor:pointer">{{ t.back }}</button>
+                <div style="flex:1"></div>
+                <button onClick="{{ onSaveForm }}" style="{{ saveBtnStyle }}">{{ t.save }}</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showAudit }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;background:rgba(3,10,22,.7);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px">
+          <div style="width:min(560px,100%);max-height:82vh;display:flex;flex-direction:column;background:#16345C;border:1px solid #1E4372;border-radius:16px;animation:vnIn .22s ease-out">
+            <div style="padding:20px 24px;border-bottom:1px solid #1E4372;display:flex;align-items:center;gap:12px">
+              <div style="flex:1;font-family:Poppins, Inter, sans-serif;font-size:17px;font-weight:600">{{ t.auditTitle }}</div>
+              <button onClick="{{ onCloseModal }}" style="width:36px;height:36px;display:grid;place-items:center;border-radius:9px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;cursor:pointer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </button>
+            </div>
+            <div style="padding:18px 24px;overflow:auto;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12.5px;color:#A9BDD6;line-height:1.6">{{ t.auditNote }}</div>
+              <sc-for list="{{ auditRows }}" as="row" hint-placeholder-count="3">
+                <div style="border:1px solid #1E4372;border-radius:10px;padding:11px 13px;display:flex;flex-direction:column;gap:4px">
+                  <div style="font-size:13px;font-weight:600">{{ row.field }}</div>
+                  <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12.5px;color:#A9BDD6;font-variant-numeric:tabular-nums">
+                    <span style="unicode-bidi:isolate">{{ row.from }}</span>
+                    <span style="opacity:.55">{{ row.arrow }}</span>
+                    <span style="unicode-bidi:isolate;color:#FEFDF8">{{ row.to }}</span>
+                  </div>
+                  <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
+                    <span style="font-size:11px;color:#6B84A3;font-variant-numeric:tabular-nums">{{ row.when }}</span>
+                    <sc-if value="{{ row.hasBy }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-size:11.5px;color:#A9BDD6;font-weight:600">{{ row.by }}</span>
+                    </sc-if>
+                    <sc-if value="{{ row.hasShift }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:10.5px;color:#6B84A3;opacity:.9">{{ row.shift }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="font-size:12.5px;color:#6B84A3">{{ auditEmpty }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showDischarge }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;background:rgba(3,10,22,.72);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px">
+          <div style="width:min(480px,100%);background:#16345C;border:1px solid #1E4372;border-radius:16px;animation:vnIn .22s ease-out">
+            <div style="padding:22px 24px;display:flex;flex-direction:column;gap:14px">
+              <div style="font-family:Poppins, Inter, sans-serif;font-size:17px;font-weight:600">{{ t.dischargeTitle }}</div>
+              <div style="font-size:13px;color:#A9BDD6;line-height:1.65">{{ dischargeBody }}</div>
+              <div style="display:flex;flex-direction:column;gap:4px;background:#0F2745;border:1px solid #1E4372;border-radius:9px;padding:10px 12px">
+                <div style="font-size:13px;color:#FEFDF8">{{ dischargeName }}</div>
+                <sc-if value="{{ dischargeNeedsId }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:12.5px;color:#A9BDD6;font-variant-numeric:tabular-nums;letter-spacing:.04em;unicode-bidi:isolate">{{ dischargeId }}</div>
+                </sc-if>
+                <sc-if value="{{ dischargeNoId }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12.5px;color:#A9BDD6;line-height:1.5">{{ t.dischargeNoId }}</div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ dischargeNeedsId }}" hint-placeholder-val="{{ true }}">
+                <input value="{{ dischargeInput }}" onChange="{{ onDischargeInput }}" placeholder="{{ t.dischargePh }}" dir="ltr" style="height:44px;border-radius:10px;border:1px solid #1E4372;background:#0F2745;color:#FEFDF8;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.04em">
+              </sc-if>
+            </div>
+            <div style="padding:16px 24px;border-top:1px solid #1E4372;display:flex;gap:10px">
+              <div style="flex:1"></div>
+              <button onClick="{{ onCloseModal }}" style="height:44px;padding:0 18px;border-radius:10px;border:1px solid #1E4372;background:transparent;color:#A9BDD6;font-size:13px;cursor:pointer">{{ t.cancel }}</button>
+              <button onClick="{{ onConfirmDischarge }}" style="{{ dischargeBtnStyle }}">{{ t.dischargeConfirm }}</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ toastStyle }}">
+          <div style="font-size:12.5px;font-weight:700">{{ toastTitle }}</div>
+          <div style="font-size:12.5px;color:#A9BDD6;line-height:1.5">{{ toastBody }}</div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  GATE = "VeinnoGate (Jetson)";
+
+  T = {
+    en: {
+      appTitle: "Patient Monitor Dashboard", sync: "Manual sync", syncTip: "Refresh the adapter list from VeinnoGate (Jetson)", manualOpen: "Open monitor",
+      serverDown: "No connection to VeinnoGate (Jetson)", reconnecting: "Reconnecting…",
+      emptyTitle: "No adapters connected", emptyBody: "Monitors open automatically when VeinnoGate (Jetson) detects an adapter powering on. You can also sync manually or open a monitor and pair an adapter yourself.",
+      identify: "Identify patient", identifyPrompt: "Adapter detected. Enter patient identification and background so VeinNet can predict blood pressure.",
+      predicted: "Predicted", predictedTip: "ABP is a VeinNet prediction from the raw PPG/HR signal and demographics — not a measurement.",
+      computing: "VeinNet computing…", predFailed: "Prediction failed",
+      alertTitle: "Predicted BP out of range", alertAck: "Acknowledge", muteTip: "Mute / unmute alert sound",
+      aSysHigh: "SBP {v} — above {l}", aSysLow: "SBP {v} — below {l}", aDiaHigh: "DBP {v} — above {l}", aDiaLow: "DBP {v} — below {l}", aMapLow: "MAP {v} — below {l}",
+      partial: "Partial demographics", partialTip: "Some demographic fields are unknown. VeinNet falls back to the training-group mean for those features.",
+      rssiTip: "BLE signal strength reported by the adapter", batteryTip: "Adapter battery level",
+      edit: "Edit details", audit: "Change log", discharge: "Discharge",
+      stMonitoring: "Monitoring", stPredicting: "Predicting", stAwaiting: "Awaiting details", stDisconnected: "Disconnected", stClosing: "Closing",
+      waitingTitle: "Waiting for data", waitingSub: "Packets arrive only on a heart-rate excursion",
+      discBanner: "Adapter disconnected — details preserved",
+      never: "No packet received yet", justNow: "updated just now", agoM: "updated {n}m ago", agoH: "updated {n}h ago",
+      formTitleId: "Patient identification", formTitleDemo: "Personal & demographic details",
+      step1Sub: "Basic identification. All four fields are required to open the monitor.",
+      fName: "Patient name", fNamePh: "Required", fDept: "Department", fBed: "Bed",
+      fId: "National ID", fIdPh: "9 digits", fIdTip: "Used to confirm discharge later — it must match exactly.",
+      requiredMsg: "Name, national ID, department and bed are required.",
+      next: "Next", back: "Back",
+      demoNote: "Model input for VeinNet. Field order is fixed. Every field may be left unknown — the model falls back to the training-group mean.",
+      fAge: "Age", fAgeTip: "18–120. Leave blank if unknown.", yes: "Yes", no: "No", unknown: "Unknown", male: "Male", female: "Female",
+      qSex: "Sex", qHypertension: "Does the patient have hypertension?", qChf: "Does the patient have congestive heart failure (CHF)?",
+      qMi: "Has the patient had a myocardial infarction (MI)?", qStroke: "Has the patient had a stroke?",
+      qArrhythmia: "Does the patient have an arrhythmia?", qValve: "Does the patient have valve disease?", qResp: "Does the patient have respiratory failure?",
+      formFooterNote: "Updating demographics affects the next prediction, not predictions already shown.",
+      cancel: "Cancel", save: "Save & send to VeinnoGate",
+      auditTitle: "Change log", auditNote: "Every edit to identification or demographics is recorded and sent to VeinnoGate (Jetson) alongside the patient record.", auditEmptyTxt: "No changes recorded yet.",
+      dischargeTitle: "Discharge patient & close monitor", dischargeBody: "This permanently deletes the patient record from the VeinnoGate (Jetson) database and the local backup once the undo window ends. Type the patient's national ID to confirm — it must match the ID entered when the monitor was opened.",
+      dischargePh: "Type the national ID", dischargeConfirm: "Discharge",
+      dischargeNoIdBody: "No patient has been identified on this monitor, so there is no record to delete. Closing it releases the adapter back to the unpaired list.",
+      dischargeNoId: "No identification entered",
+      undoTitle: "Monitor closing", undoSeconds: "seconds until permanent deletion", undo: "Undo",
+      manualTitle: "Open monitor manually", manualBody: "Backup route when automatic detection fails. Pick an adapter reported by VeinnoGate (Jetson), or power on a new one.",
+      manualAvailable: "UNPAIRED ADAPTERS", manualSpawn: "Power on new adapter",
+      demoTitle: "Demo controls", demoGlobal: "GLOBAL", demoPer: "PER MONITOR", demoNew: "Power on new adapter", demoServer: "Toggle VeinnoGate link", demoReset: "Reset all",
+      demoPacket: "Packet", demoFail: "Fail", demoConn: "Connect", demoDisc: "Disconnect",
+      alertDiscTitle: "Adapter disconnected", alertDisc: "{name} — check the wearable on the patient's hand.",
+      alertConnTitle: "Adapter reconnected", alertConn: "{name} — monitoring resumed.",
+      syncToastTitle: "Synced with VeinnoGate", syncToast: "{n} adapters reported.",
+      activeOne: "1 active monitor", activeMany: "{n} active monitors", unnamed: "Unidentified patient", noDept: "No department", noBed: "No bed",
+      loginTitle: "Sign in", loginSub: "Access the patient monitor dashboard.",
+      loginEmail: "Email", loginPassword: "Password", loginRemember: "Remember me", loginForgot: "Forgot password?",
+      loginBtn: "Sign in", loginOr: "OR", loginSso: "Continue with hospital SSO",
+      loginNoAccount: "No account?", loginRegister: "Request access",
+      signOut: "Sign out",
+      newsLabel: "NEWS", newsTier: "tier",
+      newsTip: "Left: partial NEWS2 aggregate (Royal College of Physicians, 2017) over the three parameters this adapter reports — SpO₂, pulse and systolic pressure. Respiratory rate, temperature and consciousness are not measured, so the score is a floor, never a complete NEWS2. Right: the escalation tier, which combines that score with the absolute pressure and saturation limits.",
+      tierRoutine: "Routine", tierWatch: "Watch", tierUrgent: "Urgent", tierCritical: "Critical",
+      alertUrgent: "Urgent — review patient", alertCritical: "Critical — immediate review",
+      aSpo2Low: "SpO₂ {v}% — below {l}%", aSpo2Crit: "SpO₂ {v}% — at or below {l}%",
+      aCrisis: "Hypertensive crisis {v} — at or above {l}", aMapCrit: "MAP {v} — below {l}",
+      aNews: "NEWS {v} — escalation threshold {l}",
+      lastKeepAlive: "last keep-alive",
+      alarmFor: "sounding for",
+      shiftMorning: "Morning shift", shiftEvening: "Evening shift", shiftNight: "Night shift",
+      chargeShort: "Charge", handoverTip: "Shift handover",
+      handoverTitle: "Shift handover",
+      handoverBody: "Hand the ward over to the incoming charge nurse. Monitors, predictions, alarms and adapters keep running uninterrupted.",
+      handoverCurrent: "Currently on charge", handoverSince: "since {t}",
+      handoverNew: "Incoming charge nurse", handoverNewPh: "Full name",
+      handoverShift: "Shift", handoverConfirm: "Complete handover",
+      handoverToastTitle: "Shift handover", handoverToast: "{name} is now charge nurse.",
+      recordedBy: "Recorded by", onShiftOf: "on {name}'s shift", auditShift: "shift: {name}",
+      demoCrisis: "Crisis"
+    },
+    he: {
+      appTitle: "דשבורד ניטור מטופלים", sync: "סנכרון ידני", syncTip: "רענון רשימת האדפטרים מ-VeinnoGate (Jetson)", manualOpen: "פתיחת מוניטור",
+      serverDown: "אין קשר ל-VeinnoGate (Jetson)", reconnecting: "מתחבר מחדש…",
+      emptyTitle: "אין אדפטרים מחוברים", emptyBody: "מוניטור נפתח אוטומטית כאשר VeinnoGate (Jetson) מזהה הדלקת אדפטר. אפשר גם לסנכרן ידנית או לפתוח מוניטור ולשייך אדפטר בעצמך.",
+      identify: "זיהוי מטופל", identifyPrompt: "זוהה אדפטר. יש להזין פרטי זיהוי ורקע רפואי כדי ש-VeinNet יוכל לחזות לחץ דם.",
+      predicted: "חזוי", predictedTip: "ABP הוא חיזוי של VeinNet מאות ה-PPG/HR הגולמי ומהדמוגרפיה — לא מדידה.",
+      computing: "VeinNet מעבד…", predFailed: "החיזוי נכשל",
+      alertTitle: "לחץ דם חזוי מחוץ לטווח", alertAck: "אישור", muteTip: "השתקה / הפעלת צליל התראה",
+      aSysHigh: "SBP {v} — מעל {l}", aSysLow: "SBP {v} — מתחת ל-{l}", aDiaHigh: "DBP {v} — מעל {l}", aDiaLow: "DBP {v} — מתחת ל-{l}", aMapLow: "לחץ עורקי ממוצע {v} — מתחת ל-{l}",
+      partial: "נתונים חלקיים", partialTip: "חלק מהשדות הדמוגרפיים לא ידועים. VeinNet משלים אותם בממוצע קבוצת האימון.",
+      rssiTip: "עוצמת אות BLE כפי שדווחה מהאדפטר", batteryTip: "מצב סוללת האדפטר",
+      edit: "עריכת פרטים", audit: "יומן שינויים", discharge: "סיום אשפוז",
+      stMonitoring: "מנטר", stPredicting: "מעבד", stAwaiting: "ממתין לפרטים", stDisconnected: "מנותק", stClosing: "נסגר",
+      waitingTitle: "ממתין לנתונים", waitingSub: "חבילה נשלחת רק בחריגת דופק",
+      discBanner: "האדפטר מנותק — הפרטים נשמרו",
+      never: "טרם התקבלה חבילה", justNow: "עודכן זה עתה", agoM: "עודכן לפני {n} דק'", agoH: "עודכן לפני {n} שע'",
+      formTitleId: "זיהוי מטופל", formTitleDemo: "פרטים אישיים ודמוגרפיים",
+      step1Sub: "פרטי זיהוי בסיסיים. כל ארבעת השדות נדרשים לפתיחת המוניטור.",
+      fName: "שם המטופל", fNamePh: "שדה חובה", fDept: "מחלקה", fBed: "מספר מיטה",
+      fId: "תעודת זהות", fIdPh: "9 ספרות", fIdTip: "משמשת לאישור סיום האשפוז בהמשך — חייבת להיות זהה.",
+      requiredMsg: "שם, תעודת זהות, מחלקה ומיטה הם שדות חובה.",
+      next: "הבא", back: "חזרה",
+      demoNote: "קלט למודל VeinNet. סדר השדות קבוע. כל שדה יכול להישאר \"לא ידוע\" — המודל משלים בממוצע קבוצת האימון.",
+      fAge: "גיל", fAgeTip: "18–120. אפשר להשאיר ריק אם לא ידוע.", yes: "כן", no: "לא", unknown: "לא ידוע", male: "זכר", female: "נקבה",
+      qSex: "מין", qHypertension: "האם למטופל יתר לחץ דם?", qChf: "האם למטופל אי-ספיקת לב (CHF)?",
+      qMi: "האם למטופל היה אוטם שריר הלב (MI)?", qStroke: "האם למטופל היה שבץ מוחי?",
+      qArrhythmia: "האם למטופל הפרעת קצב לב?", qValve: "האם למטופל מחלת מסתמים?", qResp: "האם למטופל אי-ספיקה נשימתית?",
+      formFooterNote: "עדכון דמוגרפיה משפיע על החיזוי הבא, לא על חיזויים שכבר הוצגו.",
+      cancel: "ביטול", save: "שמירה ושליחה ל-VeinnoGate",
+      auditTitle: "יומן שינויים", auditNote: "כל עריכה של פרטי זיהוי או דמוגרפיה מתועדת ונשלחת ל-VeinnoGate (Jetson) יחד עם רשומת המטופל.", auditEmptyTxt: "טרם נרשמו שינויים.",
+      dischargeTitle: "סיום אשפוז וסגירת מוניטור", dischargeBody: "הפעולה מוחקת לצמיתות את רשומת המטופל ממסד הנתונים ב-VeinnoGate (Jetson) ומהגיבוי הלוקאלי בתום חלון הביטול. יש להקליד את תעודת הזהות של המטופל לאישור — היא חייבת להיות זהה לזו שהוזנה בפתיחת המוניטור.",
+      dischargePh: "הקלד/י את תעודת הזהות", dischargeConfirm: "סיום אשפוז",
+      dischargeNoIdBody: "לא הוזן מטופל במוניטור הזה, ולכן אין רשומה למחיקה. סגירה משחררת את האדפטר חזרה לרשימת הלא-משויכים.",
+      dischargeNoId: "לא הוזנו פרטי זיהוי",
+      undoTitle: "המוניטור נסגר", undoSeconds: "שניות עד מחיקה סופית", undo: "ביטול",
+      manualTitle: "פתיחת מוניטור ידנית", manualBody: "מסלול גיבוי כשהזיהוי האוטומטי נכשל. בחר/י אדפטר שדווח מ-VeinnoGate (Jetson), או הדלק/י אדפטר חדש.",
+      manualAvailable: "אדפטרים לא משויכים", manualSpawn: "הדלק אדפטר חדש",
+      demoTitle: "פאנל הדגמה", demoGlobal: "כללי", demoPer: "לפי מוניטור", demoNew: "הדלק אדפטר חדש", demoServer: "ניתוק/חיבור VeinnoGate", demoReset: "אפס הכל",
+      demoPacket: "חבילה", demoFail: "כשל", demoConn: "חבר", demoDisc: "נתק",
+      alertDiscTitle: "האדפטר נותק", alertDisc: "{name} — יש לבדוק את היחידה על יד המטופל.",
+      alertConnTitle: "האדפטר חובר מחדש", alertConn: "{name} — הניטור התחדש.",
+      syncToastTitle: "סונכרן עם VeinnoGate", syncToast: "דווחו {n} אדפטרים.",
+      activeOne: "מוניטור פעיל אחד", activeMany: "{n} מוניטורים פעילים", unnamed: "מטופל לא מזוהה", noDept: "ללא מחלקה", noBed: "ללא מיטה",
+      loginTitle: "כניסה", loginSub: "כניסה לדשבורד ניטור המטופלים.",
+      loginEmail: "אימייל", loginPassword: "סיסמה", loginRemember: "זכור אותי", loginForgot: "שכחת סיסמה?",
+      loginBtn: "כניסה", loginOr: "או", loginSso: "כניסה עם SSO של בית החולים",
+      loginNoAccount: "אין לך חשבון?", loginRegister: "בקשת גישה",
+      signOut: "יציאה",
+      newsLabel: "NEWS", newsTier: "דרגה",
+      newsTip: "מימין: ניקוד NEWS2 חלקי (Royal College of Physicians, 2017) על שלושת המדדים שהאדפטר מדווח — SpO₂, דופק ולחץ סיסטולי. קצב נשימה, חום ומצב הכרה אינם נמדדים, ולכן הניקוד הוא רצפה ולא NEWS2 מלא. משמאל: דרגת ההסלמה, שמשלבת את הניקוד עם הספים המוחלטים של הלחץ והרוויה.",
+      tierRoutine: "שגרה", tierWatch: "מעקב", tierUrgent: "דחוף", tierCritical: "קריטי",
+      alertUrgent: "דחוף — נדרשת בדיקת מטופל", alertCritical: "קריטי — נדרשת התייחסות מיידית",
+      aSpo2Low: "SpO₂ {v}% — מתחת ל-{l}%", aSpo2Crit: "SpO₂ {v}% — {l}% ומטה",
+      aCrisis: "משבר יתר לחץ דם {v} — {l} ומעלה", aMapCrit: "לחץ עורקי ממוצע {v} — מתחת ל-{l}",
+      aNews: "NEWS {v} — סף הסלמה {l}",
+      lastKeepAlive: "keep-alive אחרון",
+      alarmFor: "מתריע כבר",
+      shiftMorning: "משמרת בוקר", shiftEvening: "משמרת ערב", shiftNight: "משמרת לילה",
+      chargeShort: "אחראית", handoverTip: "החלפת משמרת",
+      handoverTitle: "החלפת משמרת",
+      handoverBody: "העברת המחלקה לאחראית המשמרת הנכנסת. המוניטורים, החיזויים, ההתראות והאדפטרים ממשיכים לפעול ללא הפרעה.",
+      handoverCurrent: "אחראית נוכחית", handoverSince: "מאז {t}",
+      handoverNew: "אחראית משמרת נכנסת", handoverNewPh: "שם מלא",
+      handoverShift: "משמרת", handoverConfirm: "השלמת ההחלפה",
+      handoverToastTitle: "החלפת משמרת", handoverToast: "{name} היא כעת אחראית המשמרת.",
+      recordedBy: "נרשם על ידי", onShiftOf: "במשמרת של {name}", auditShift: "משמרת: {name}",
+      demoCrisis: "משבר"
+    }
+  };
+
+  CONDS = [
+    ["sex", "qSex"], ["hypertension", "qHypertension"], ["chf", "qChf"], ["mi", "qMi"],
+    ["stroke", "qStroke"], ["arrhythmia", "qArrhythmia"], ["valveDisease", "qValve"], ["respiratoryFailure", "qResp"]
+  ];
+
+  SEED = [
+    ["Miriam Cohen", "Internal A", "12", { age: 74, sex: "female", hypertension: true, chf: true, mi: null, stroke: false, arrhythmia: true, valveDisease: null, respiratoryFailure: false }, "data"],
+    ["David Almog", "Internal A", "14", { age: 61, sex: "male", hypertension: true, chf: false, mi: true, stroke: false, arrhythmia: false, valveDisease: false, respiratoryFailure: false }, "predicting"],
+    ["Yael Barzilai", "Cardiology", "3", { age: 58, sex: "female", hypertension: null, chf: null, mi: null, stroke: null, arrhythmia: null, valveDisease: null, respiratoryFailure: null }, "partial"],
+    ["Nadav Shani", "Cardiology", "5", { age: 45, sex: "male", hypertension: false, chf: false, mi: false, stroke: false, arrhythmia: false, valveDisease: false, respiratoryFailure: false }, "nodata"],
+    ["Rita Halevi", "Geriatrics", "21", { age: 88, sex: "female", hypertension: true, chf: true, mi: false, stroke: true, arrhythmia: true, valveDisease: true, respiratoryFailure: true }, "disconnected"],
+    ["Omar Haddad", "Internal B", "7", { age: 67, sex: "male", hypertension: true, chf: false, mi: false, stroke: false, arrhythmia: true, valveDisease: false, respiratoryFailure: null }, "data"],
+    ["Tamar Ziv", "Internal B", "9", { age: 33, sex: "female", hypertension: false, chf: false, mi: false, stroke: false, arrhythmia: false, valveDisease: false, respiratoryFailure: false }, "failed"],
+    [null, null, null, null, "awaiting"]
+  ];
+
+  // ⚠️ PLACEHOLDER THRESHOLDS — demo only. See ENGINEERING_PROTOCOL.md §5.
+  // Absolute limits, on top of the graded NEWS2 aggregate:
+  //   SBP > 160  severe hypertension        SBP < 90  hypotension
+  //   DBP > 100  severe diastolic elevation DBP < 50  low diastolic pressure
+  //   MAP < 65   perfusion floor            MAP < 55  critical hypoperfusion
+  //   ≥180/120   hypertensive crisis
+  //   SpO₂ < 92  hypoxaemia                 SpO₂ ≤ 88 critical hypoxaemia
+  // Replace with the unit's own protocol before deployment and mirror them in the
+  // firmware / VeinnoGate configuration.
+  LIMITS = {
+    sysHigh: 160, sysLow: 90, diaHigh: 100, diaLow: 50, mapLow: 65, mapCrit: 55,
+    crisisSys: 180, crisisDia: 120, spo2Low: 92, spo2Crit: 88, newsUrgent: 5, newsCritical: 7
+  };
+
+  // Bumped whenever the monitor shape or the physiology model changes, so a stale
+  // payload from an earlier build is discarded instead of restored half-valid.
+  SCHEMA = 5;
+  KEY_MON = "veinnovate.monitors";
+  KEY_SESSION = "veinnovate.session";
+
+  state = {
+    lang: "en", user: null, muted: false, rememberMe: true, login: { email: "", password: "", remember: true },
+    shift: null, handoverName: "", handoverShift: null,
+    monitors: [], closing: {}, serverDown: false, demoOpen: true,
+    modal: null, form: null, dischargeInput: "", toast: null, tick: 0, adapterSeq: 0, manualPick: null, manualIds: []
+  };
+
+  componentDidMount() {
+    this.timers = {};
+    this.lastTone = {};
+    let restored = null, session = null;
+    try {
+      const rawS = localStorage.getItem(this.KEY_SESSION);
+      if (rawS) session = JSON.parse(rawS);
+      const raw = localStorage.getItem(this.KEY_MON);
+      if (raw) restored = JSON.parse(raw);
+      if (restored && restored.v !== this.SCHEMA) restored = null;
+    } catch (e) { restored = null; }
+
+    if (session) this.setState({ user: session.user || null, lang: session.lang || "en", shift: session.shift || null });
+
+    if (restored && restored.monitors && restored.monitors.length) {
+      // An inference interrupted by the reload is re-run, never left half-shown:
+      // a tile must not display an alert, a "—" and "waiting for data" at once.
+      const resume = [];
+      const ms = restored.monitors.filter(m => m.state !== "closing").map(m => {
+        const a = m.vitals.abp || {};
+        const midFlight = m.state === "predicting" || a.status === "computing";
+        if (midFlight && m.state !== "disconnected" && m.state !== "awaiting_identification") {
+          m.state = "predicting"; a.status = "computing"; a.systolic = null; a.diastolic = null;
+          resume.push(m.id);
+        } else if (typeof a.systolic === "number") {
+          a.status = "ready";
+          if (m.state === "predicting") m.state = "monitoring";
+        } else if (a.status !== "failed") {
+          a.status = "idle";
+          if (m.state === "predicting") m.state = "monitoring";
+        }
+        m.vitals.abp = a;
+        return m;
+      });
+      this.setState({ monitors: ms, adapterSeq: restored.adapterSeq || ms.length });
+      ms.forEach(m => {
+        if (m.state === "monitoring") this.startAdapter(m.id);
+        if (m.state === "disconnected") this.scheduleReconnect(m.id);
+      });
+      resume.forEach(id => this.finishPrediction(id, this.rnd(1500, 3000), false));
+      // A restored alarm keeps its cadence instead of firing the instant the tab loads.
+      ms.forEach(m => { if (m.alert) this.lastTone[m.id] = { key: this.alertKey(m.alert), at: this.now() }; });
+    } else {
+      this.seed();
+    }
+    this.clock = setInterval(() => this.setState(s => ({ tick: s.tick + 1 })), 500);
+    this.alarmLoop();
+  }
+
+  componentDidUpdate() { this.persist(); }
+
+  componentWillUnmount() {
+    clearInterval(this.clock);
+    clearTimeout(this.saveTimer);
+    Object.keys(this.timers || {}).forEach(k => clearTimeout(this.timers[k]));
+  }
+
+  persist() {
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(this.KEY_MON, JSON.stringify({ v: this.SCHEMA, monitors: this.state.monitors, adapterSeq: this.state.adapterSeq }));
+        localStorage.setItem(this.KEY_SESSION, JSON.stringify({ user: this.state.rememberMe ? this.state.user : null, lang: this.state.lang, shift: this.state.shift }));
+      } catch (e) { /* quota */ }
+    }, 300);
+  }
+
+  rnd(a, b) { return Math.round(a + Math.random() * (b - a)); }
+  now() { return Date.now(); }
+  uid() { return "m" + Math.random().toString(36).slice(2, 9); }
+
+  mac(i) {
+    const h = "0123456789ABCDEF";
+    let s = "E4:5F";
+    for (let k = 0; k < 4; k++) s += ":" + h[(i * 7 + k * 3) % 16] + h[(i * 5 + k * 11) % 16];
+    return s;
+  }
+
+  blank() {
+    return { age: null, sex: null, hypertension: null, chf: null, mi: null, stroke: null, arrhythmia: null, valveDisease: null, respiratoryFailure: null };
+  }
+
+  makeMonitor(i, name, dept, bed, demo, adapterId) {
+    return {
+      id: this.uid(), adapterId: adapterId || this.mac(i + 1),
+      state: name === null ? "awaiting_identification" : "monitoring",
+      patient: {
+        name: name, nationalId: name === null ? null : String(310000000 + (i + 1) * 1234577).slice(0, 9),
+        department: dept, bed: bed, demographics: demo || this.blank()
+      },
+      auditLog: [],
+      vitals: { hr: null, spo2: null, packetReceivedAt: null, abp: { systolic: null, diastolic: null, predictedAt: null, isPrediction: true, status: "idle" } },
+      adapter: { battery: this.rnd(28, 98), bleRssi: this.rnd(-82, -46), lastSeenAt: this.now() },
+      createdAt: this.now()
+    };
+  }
+
+  seed() {
+    Object.keys(this.timers).forEach(k => clearTimeout(this.timers[k]));
+    this.timers = {};
+    this.lastTone = {};
+    this.alarmLoop();
+    const ms = this.SEED.map((row, i) => {
+      const m = this.makeMonitor(i, row[0], row[1], row[2], row[3]);
+      const kind = row[4], demo = m.patient.demographics, prof = this.profile(demo);
+      const settle = (hr, at) => {
+        m.vitals.hr = hr;
+        m.vitals.spo2 = this.makeSpo2(hr, demo);
+        m.vitals.packetReceivedAt = at;
+        const p = this.makeAbp(hr, demo);
+        m.vitals.abp.status = "ready"; m.vitals.abp.systolic = p.sys; m.vitals.abp.diastolic = p.dia;
+        m.vitals.abp.predictedAt = at + 2200;
+        const a = this.assess(hr, m.vitals.spo2, p.sys, p.dia);
+        m.news = { total: a.total, tier: a.tier };
+        if (a.tier === "urgent" || a.tier === "critical") {
+          // A seeded alarm reads as recently raised rather than hours stale.
+          m.alert = { flags: a.flags, at: Math.max(at + 2200, this.now() - this.rnd(12, 70) * 1000), tier: a.tier, total: a.total };
+          this.lastTone[m.id] = { key: this.alertKey(m.alert), at: this.now() };
+        }
+      };
+      if (kind === "data" || kind === "partial") settle(this.excursionHr(prof, i === 0 ? "tachy" : null).hr, this.now() - this.rnd(40, 400) * 1000);
+      if (kind === "failed") {
+        m.vitals.hr = this.excursionHr(prof).hr;
+        m.vitals.spo2 = this.makeSpo2(m.vitals.hr, demo);
+        m.vitals.packetReceivedAt = this.now() - this.rnd(40, 200) * 1000;
+        m.vitals.abp.status = "failed";
+        const af = this.assess(m.vitals.hr, m.vitals.spo2, null, null);
+        m.news = { total: af.total, tier: af.tier };
+        if (af.tier === "urgent" || af.tier === "critical") {
+          m.alert = { flags: af.flags, at: m.vitals.packetReceivedAt, tier: af.tier, total: af.total };
+          this.lastTone[m.id] = { key: this.alertKey(m.alert), at: this.now() };
+        }
+      }
+      if (kind === "predicting") {
+        m.state = "predicting"; m.vitals.hr = this.excursionHr(prof, "tachy").hr;
+        m.vitals.spo2 = this.makeSpo2(m.vitals.hr, demo);
+        m.vitals.packetReceivedAt = this.now(); m.vitals.abp.status = "computing";
+        m.auditLog = [{ field: "hypertension", from: null, to: true, changedAt: this.now() - 900000, changedBy: "Dana Levi" }];
+      }
+      if (kind === "disconnected") {
+        settle(this.excursionHr(prof, "brady").hr, this.now() - 300000);
+        m.state = "disconnected"; m.adapter.lastSeenAt = this.now() - 268000;
+      }
+      if (kind === "data") m.auditLog = [{ field: "bed", from: "10", to: row[2], changedAt: this.now() - 3600000, changedBy: "Dana Levi" }];
+      return m;
+    });
+    this.setState({ monitors: ms, adapterSeq: ms.length, closing: {}, modal: null, form: null, toast: null, serverDown: false });
+    ms.forEach(m => { if (m.state === "monitoring") this.startAdapter(m.id); });
+    ms.forEach(m => { if (m.state === "predicting") this.finishPrediction(m.id, 2200, false); });
+  }
+
+  // Two independent uplinks, exactly as the firmware is specified:
+  //  1. EVENT packet — sent only when the PPG-derived heart rate leaves the
+  //     patient's resting band. Carries the waveform features, triggers inference.
+  //  2. KEEP-ALIVE — fixed cadence, device telemetry only (battery, link quality).
+  //     No waveform, no inference. It is what separates "quiet patient" from
+  //     "dead link", and it is where dropout is detected.
+  // Both are compressed for the demo; ward values are in ENGINEERING_PROTOCOL.md §4.
+  startAdapter(id) { this.schedulePacket(id); this.scheduleKeepAlive(id); }
+
+  schedulePacket(id) {
+    clearTimeout(this.timers["p" + id]);
+    this.timers["p" + id] = setTimeout(() => { this.deliverPacket(id); }, this.rnd(20000, 65000));
+  }
+
+  scheduleKeepAlive(id) {
+    clearTimeout(this.timers["k" + id]);
+    this.timers["k" + id] = setTimeout(() => {
+      const m = this.state.monitors.find(x => x.id === id);
+      if (!m) return;
+      if (m.state === "closing") return;
+      if (m.state === "disconnected" || this.state.serverDown) { this.scheduleKeepAlive(id); return; }
+      // A weak BLE link is what actually drops adapters, so dropout tracks RSSI.
+      const weak = m.adapter.bleRssi < -78;
+      if (Math.random() < (weak ? 0.14 : 0.03)) { this.setDisconnected(id); this.scheduleReconnect(id); return; }
+      this.patch(id, mm => {
+        mm.adapter.lastSeenAt = this.now();
+        mm.adapter.bleRssi = Math.max(-92, Math.min(-38, mm.adapter.bleRssi + this.rnd(-3, 3)));
+        if (Math.random() < 0.35) mm.adapter.battery = Math.max(2, mm.adapter.battery - 1);
+      });
+      this.scheduleKeepAlive(id);
+    }, this.rnd(60000, 95000));
+  }
+
+  // ── Synthetic physiology ────────────────────────────────────────────────
+  // Every displayed number for a patient comes from ONE resting profile, so HR,
+  // SpO₂ and the predicted ABP stay consistent with each other and with the record.
+  // Reference ranges used (adult, at rest):
+  //   HR 60–100 bpm · SpO₂ 95–100% · BP <120/80 normal, ≥140/90 hypertensive
+  //   pulse pressure 30–50 mmHg, widening with age / arterial stiffness
+  //   MAP = DBP + PP/3, normal 70–100 mmHg
+  // Unknown demographic fields fall back to the training-group mean — exactly what
+  // the form and the "partial demographics" chip promise the clinician.
+  MEAN_AGE = 62;
+
+  profile(demo) {
+    const d = demo || {};
+    const age = typeof d.age === "number" ? d.age : this.MEAN_AGE;
+    let hr = 74;
+    let sys = 112 + (age - 40) * 0.45;                              // SBP climbs with age
+    let dia = 72 + (age - 40) * 0.12 - Math.max(0, age - 60) * 0.38; // DBP plateaus, then falls
+    let spo2 = 97;
+    if (d.hypertension === true) { sys += 17; dia += 8; }
+    if (d.chf === true) { sys -= 8; dia -= 4; hr += 8; spo2 -= 2; }
+    if (d.mi === true) { sys -= 4; hr += 2; }
+    if (d.stroke === true) { sys += 5; }
+    if (d.arrhythmia === true) { hr += 7; }
+    if (d.valveDisease === true) { sys += 7; dia -= 6; }             // regurgitation widens PP
+    if (d.respiratoryFailure === true) { hr += 10; spo2 -= 6; }
+    if (d.sex === "female") { hr += 3; sys -= 3; }
+    return { hr: Math.round(hr), sys: Math.round(sys), dia: Math.round(dia), spo2: Math.round(spo2) };
+  }
+
+  // A packet exists only because the heart rate left the resting band, so every
+  // packet is either a tachycardic or a bradycardic event for THIS patient.
+  excursionHr(prof, kind) {
+    const k = kind || (Math.random() < 0.66 ? "tachy" : "brady");
+    if (k === "tachy") return { hr: Math.min(178, prof.hr + this.rnd(28, 64)), kind: k };
+    return { hr: Math.max(38, prof.hr - this.rnd(18, 34)), kind: k };
+  }
+
+  // ABP is predicted from the SAME PPG waveform the heart rate comes from, so the
+  // two must move together. Tachycardia: cardiac output up, diastole shortens →
+  // both pressures rise. Bradycardia: larger stroke volume with a long diastolic
+  // runoff → systolic holds or rises while diastolic drops, widening pulse pressure.
+  makeAbp(hr, demo) {
+    const p = this.profile(demo);
+    const dh = hr - p.hr;
+    let sys, dia;
+    if (dh >= 0) { sys = p.sys + dh * 0.46; dia = p.dia + dh * 0.34; }
+    else { sys = p.sys + Math.abs(dh) * 0.18; dia = p.dia - Math.abs(dh) * 0.5; }
+    sys += this.rnd(-5, 5); dia += this.rnd(-3, 3);   // VeinNet residual error, ±5 mmHg
+    sys = Math.max(72, Math.min(205, Math.round(sys)));
+    dia = Math.max(35, Math.min(125, Math.round(dia)));
+    if (sys - dia < 25) dia = sys - 25;               // pulse pressure floor
+    if (sys - dia > 95) dia = sys - 95;               // and ceiling
+    return { sys: sys, dia: dia };
+  }
+
+  makeSpo2(hr, demo) {
+    const p = this.profile(demo);
+    let v = p.spo2 + this.rnd(-1, 2);
+    if (hr > 140) v -= this.rnd(1, 3);                // demand outruns oxygen delivery
+    if (hr < 45) v -= this.rnd(1, 2);
+    return Math.max(84, Math.min(100, Math.round(v)));
+  }
+
+  abpFlags(sys, dia) {
+    const L = this.LIMITS, out = [];
+    const map = Math.round(dia + (sys - dia) / 3);
+    if (sys > L.sysHigh) out.push(["sysHigh", sys, L.sysHigh]);
+    if (sys < L.sysLow) out.push(["sysLow", sys, L.sysLow]);
+    if (dia > L.diaHigh) out.push(["diaHigh", dia, L.diaHigh]);
+    if (dia < L.diaLow) out.push(["diaLow", dia, L.diaLow]);
+    if (map < L.mapLow) out.push(["mapLow", map, L.mapLow]);
+    return out;
+  }
+
+  // ── Graded escalation: partial NEWS2 (RCP 2017) ─────────────────────────
+  // Only 3 of the 7 NEWS2 parameters exist on this device — respiratory rate,
+  // temperature and consciousness are not measured — so the aggregate is a FLOOR.
+  // The real integration must feed the missing three in before this score is
+  // presented as NEWS2 to a clinician. See ENGINEERING_PROTOCOL.md §5.
+  newsSpo2(v) { if (v === null || v === undefined) return 0; if (v >= 96) return 0; if (v >= 94) return 1; if (v >= 92) return 2; return 3; }
+  newsPulse(v) { if (v === null || v === undefined) return 0; if (v <= 40) return 3; if (v <= 50) return 1; if (v <= 90) return 0; if (v <= 110) return 1; if (v <= 130) return 2; return 3; }
+  newsSys(v) { if (v === null || v === undefined) return 0; if (v <= 90) return 3; if (v <= 100) return 2; if (v <= 110) return 1; if (v < 220) return 0; return 3; }
+
+  // Returns { tier, total, parts, flags }. Pressures may be null when the
+  // VeinNet inference failed — SpO₂ and pulse are measured, so they still score.
+  assess(hr, spo2, sys, dia) {
+    const L = this.LIMITS;
+    const parts = { spo2: this.newsSpo2(spo2), pulse: this.newsPulse(hr), sys: this.newsSys(sys) };
+    const total = parts.spo2 + parts.pulse + parts.sys;
+    let flags = [];
+    if (typeof sys === "number" && typeof dia === "number") {
+      flags = flags.concat(this.abpFlags(sys, dia));
+      const map = Math.round(dia + (sys - dia) / 3);
+      if (sys >= L.crisisSys || dia >= L.crisisDia) flags.push(["crisis", sys + "/" + dia, L.crisisSys + "/" + L.crisisDia]);
+      if (map < L.mapCrit) flags.push(["mapCrit", map, L.mapCrit]);
+    }
+    if (typeof spo2 === "number") {
+      if (spo2 <= L.spo2Crit) flags.push(["spo2Crit", spo2, L.spo2Crit]);
+      else if (spo2 < L.spo2Low) flags.push(["spo2Low", spo2, L.spo2Low]);
+    }
+    if (total >= L.newsUrgent) flags.push(["news", total, L.newsUrgent]);
+    // Collapse a limit into its own critical form so a reason is never listed twice.
+    const has = k => flags.some(x => x[0] === k);
+    if (has("crisis")) flags = flags.filter(x => x[0] !== "sysHigh" && x[0] !== "diaHigh");
+    if (has("mapCrit")) flags = flags.filter(x => x[0] !== "mapLow");
+
+    // A single parameter scoring 3 escalates on its own — but only for the two
+    // parameters the ward chose to alarm on (pressure and saturation). A lone
+    // heart-rate excursion still feeds the aggregate without raising a banner.
+    const singleThree = parts.spo2 >= 3 || parts.sys >= 3;
+    const critical = total >= L.newsCritical || has("crisis") || has("mapCrit") || has("spo2Crit") || has("sysLow");
+    let tier = "routine";
+    if (total >= 1) tier = "watch";
+    if (flags.length || singleThree) tier = "urgent";
+    if (critical) tier = "critical";
+    return { tier: tier, total: total, parts: parts, flags: flags };
+  }
+
+  alertKey(a) { return a.tier + ":" + a.flags.map(f => f[0]).join("|"); }
+
+  beep(tier) {
+    if (this.state.muted) return;
+    try {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return;
+      this.ac = this.ac || new C();
+      if (this.ac.state === "suspended") this.ac.resume();
+      // IEC 60601-1-8 alarm signals: medium priority is a burst of three pulses,
+      // high priority a burst of five at a higher pitch, repeated.
+      const high = tier === "critical";
+      const t0 = this.ac.currentTime;
+      const pulses = high ? 5 : 3, step = high ? 0.17 : 0.24, freq = high ? 960 : 640;
+      const bursts = high ? [0, 1.25] : [0];
+      bursts.forEach(b => {
+        for (let i = 0; i < pulses; i++) {
+          const off = b + i * step;
+          const o = this.ac.createOscillator(), g = this.ac.createGain();
+          o.type = "sine"; o.frequency.value = freq;
+          g.gain.setValueAtTime(0, t0 + off);
+          g.gain.linearRampToValueAtTime(high ? 0.085 : 0.06, t0 + off + 0.02);
+          g.gain.linearRampToValueAtTime(0, t0 + off + step * 0.62);
+          o.connect(g); g.connect(this.ac.destination);
+          o.start(t0 + off); o.stop(t0 + off + step);
+        }
+      });
+    } catch (e) { /* audio unavailable */ }
+  }
+
+  // ── Alarm repetition (IEC 60601-1-8 burst intervals) ────────────────────
+  // A burst is not enough on its own: an unattended alarm has to keep asking, and
+  // ask more often the longer it goes unattended. High-priority signals repeat
+  // every 2.5–15 s, medium-priority every 15–30 s; the schedule below stays inside
+  // those bands and tightens as the condition persists, so a critical alarm ends
+  // up roughly eight times more insistent than an urgent one.
+  //   urgent   25 s → 16 s after 90 s
+  //   critical 10 s →  6 s after 30 s →  3 s after 75 s
+  ALARM_REPEAT = {
+    urgent:   [[0, 25000], [90000, 16000]],
+    critical: [[0, 10000], [30000, 6000], [75000, 3000]]
+  };
+
+  alarmInterval(tier, elapsed) {
+    const steps = this.ALARM_REPEAT[tier];
+    if (!steps) return 0;
+    let iv = steps[0][1];
+    steps.forEach(st => { if (elapsed >= st[0]) iv = st[1]; });
+    return iv;
+  }
+
+  alarmLoop() {
+    clearTimeout(this.timers.alarm);
+    this.timers.alarm = setTimeout(() => { this.alarmTick(); this.alarmLoop(); }, 1000);
+  }
+
+  alarmTick() {
+    const now = this.now();
+    this.state.monitors.forEach(m => {
+      const a = m.alert;
+      if (!a || m.state === "closing" || m.state === "awaiting_identification") { delete this.lastTone[m.id]; return; }
+      const key = this.alertKey(a), rec = this.lastTone[m.id];
+      if (!rec || rec.key !== key) { this.lastTone[m.id] = { key: key, at: now }; this.beep(a.tier); return; }
+      if (now - rec.at >= this.alarmInterval(a.tier, now - a.at)) { rec.at = now; this.beep(a.tier); }
+    });
+  }
+
+  scheduleReconnect(id) {
+    clearTimeout(this.timers["r" + id]);
+    this.timers["r" + id] = setTimeout(() => {
+      const m = this.state.monitors.find(x => x.id === id);
+      if (!m || m.state !== "disconnected") return;
+      this.patch(id, mm => { mm.state = "monitoring"; mm.adapter.lastSeenAt = this.now(); });
+      this.startAdapter(id);
+      const t = this.t();
+      this.showToast(t.alertConnTitle, this.fmt(t.alertConn, { name: m.patient.name || t.unnamed }), "ok");
+    }, this.rnd(18000, 45000));
+  }
+
+  deliverPacket(id, mode) {
+    const m = this.state.monitors.find(x => x.id === id);
+    if (!m || m.state === "disconnected" || m.state === "closing" || m.state === "awaiting_identification" || this.state.serverDown) { this.schedulePacket(id); return; }
+    const prof = this.profile(m.patient.demographics);
+    const hr = mode === "crisis" ? Math.min(178, prof.hr + this.rnd(66, 92)) : this.excursionHr(prof).hr;
+    const spo2 = this.makeSpo2(hr, m.patient.demographics);
+    this.patch(id, mm => {
+      mm.state = "predicting";
+      mm.vitals.hr = hr; mm.vitals.spo2 = spo2; mm.vitals.packetReceivedAt = this.now();
+      mm.vitals.abp = { systolic: null, diastolic: null, predictedAt: null, isPrediction: true, status: "computing" };
+      mm.adapter.lastSeenAt = this.now();
+      mm.adapter.bleRssi = Math.max(-92, Math.min(-38, mm.adapter.bleRssi + this.rnd(-4, 4)));
+      if (Math.random() < 0.3) mm.adapter.battery = Math.max(2, mm.adapter.battery - 1);
+    });
+    const fail = mode === "fail" || Math.random() < .08;
+    this.finishPrediction(id, this.rnd(1500, 3000), fail, mode === "crisis");
+  }
+
+  finishPrediction(id, delay, fail, crisis) {
+    clearTimeout(this.timers["a" + id]);
+    this.timers["a" + id] = setTimeout(() => {
+      const cur = this.state.monitors.find(x => x.id === id);
+      if (!cur || cur.state === "closing") return;
+      // Inference runs on the VeinnoGate box, so losing the link mid-compute fails it.
+      const failed = fail === true || this.state.serverDown;
+      const p = this.makeAbp(cur.vitals.hr, cur.patient.demographics);
+      let sys = p.sys, dia = p.dia;
+      if (crisis) { sys = Math.max(sys, this.rnd(182, 206)); dia = Math.max(dia, this.rnd(118, 127)); }
+      // SpO₂ and pulse are measured on the adapter, so they are scored even when
+      // the pressure inference fails; only the pressure reasons drop out.
+      const a = this.assess(cur.vitals.hr, cur.vitals.spo2, failed ? null : sys, failed ? null : dia);
+      const raise = a.tier === "urgent" || a.tier === "critical";
+      const wasKey = cur.alert ? this.alertKey(cur.alert) : "";
+      const isKey = this.alertKey(a);
+      this.patch(id, mm => {
+        if (mm.state === "closing") return;
+        if (mm.state !== "disconnected") mm.state = "monitoring";
+        if (failed) {
+          mm.vitals.abp.status = "failed";
+          mm.vitals.abp.systolic = null; mm.vitals.abp.diastolic = null;
+        } else {
+          mm.vitals.abp.status = "ready";
+          mm.vitals.abp.systolic = sys;
+          mm.vitals.abp.diastolic = dia;
+          mm.vitals.abp.predictedAt = this.now();
+        }
+        mm.news = { total: a.total, tier: a.tier };
+        // Non-latching alarm: a reading back inside the range clears it by itself.
+        if (raise) {
+          // An unchanged condition keeps its original onset time, so the escalation
+          // clock counts how long the alarm has really gone unattended.
+          const since = mm.alert && this.alertKey(mm.alert) === isKey ? mm.alert.at : this.now();
+          mm.alert = { flags: a.flags, at: since, tier: a.tier, total: a.total };
+        } else delete mm.alert;
+      });
+      if (raise && isKey !== wasKey) { this.beep(a.tier); this.lastTone[id] = { key: isKey, at: this.now() }; }
+      if (!raise) delete this.lastTone[id];
+      this.schedulePacket(id);
+    }, delay);
+  }
+
+  patch(id, fn) {
+    this.setState(s => ({
+      monitors: s.monitors.map(m => {
+        if (m.id !== id) return m;
+        const c = JSON.parse(JSON.stringify(m));
+        fn(c);
+        return c;
+      })
+    }));
+  }
+
+  userFromEmail(email) {
+    const local = String(email).trim().split("@")[0].replace(/[._-]+/g, " ").trim();
+    const name = local.split(" ").filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") || "Clinician";
+    return { name: name, role: String(email).trim() };
+  }
+
+  // The shift is ward context, not an account: it survives sign-out, and handing it
+  // over touches nothing on the monitors — no timer, prediction or alarm is reset.
+  autoShift(ts) {
+    const h = new Date(ts || this.now()).getHours();
+    return h >= 7 && h < 15 ? "morning" : (h >= 15 && h < 23 ? "evening" : "night");
+  }
+
+  shiftName(key) {
+    const t = this.t();
+    return { morning: t.shiftMorning, evening: t.shiftEvening, night: t.shiftNight }[key] || t.shiftMorning;
+  }
+
+  currentShift() {
+    return this.state.shift || { charge: this.state.user ? this.state.user.name : "", key: this.autoShift(), startedAt: this.now() };
+  }
+
+  clockTime(ts) {
+    return new Date(ts).toLocaleTimeString(this.state.lang === "he" ? "he-IL" : "en-GB", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  t() { return this.T[this.state.lang]; }
+  fmt(str, vals) { let o = str; Object.keys(vals).forEach(k => { o = o.split("{" + k + "}").join(vals[k]); }); return o; }
+
+  // Same substitution, but each value is wrapped in a Unicode first-strong isolate
+  // (U+2068 … U+2069). Alert reasons put two numbers in one RTL line separated by
+  // neutral characters, which the bidi algorithm would otherwise reorder.
+  fmtI(str, vals) {
+    const iso = {};
+    Object.keys(vals).forEach(k => { iso[k] = "\u2068" + vals[k] + "\u2069"; });
+    return this.fmt(str, iso);
+  }
+
+  showToast(title, body, tone) {
+    this.setState({ toast: { title: title, body: body, tone: tone || "info" } });
+    clearTimeout(this.timers.toast);
+    this.timers.toast = setTimeout(() => this.setState({ toast: null }), 6000);
+  }
+
+  mmss(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+
+  rel(ts) {
+    const t = this.t();
+    if (!ts) return t.never;
+    const d = Math.floor((this.now() - ts) / 1000);
+    if (d < 45) return t.justNow;
+    if (d < 3600) return this.fmt(t.agoM, { n: Math.round(d / 60) });
+    return this.fmt(t.agoH, { n: Math.round(d / 3600) });
+  }
+
+  openForm(id) {
+    const m = this.state.monitors.find(x => x.id === id);
+    if (!m) return;
+    const d = m.patient.demographics;
+    this.setState({
+      modal: { type: "form", id: id },
+      form: {
+        step: "id", recordedBy: this.currentShift().charge || "",
+        name: m.patient.name || "", nationalId: m.patient.nationalId || "", department: m.patient.department || "", bed: m.patient.bed || "",
+        age: d.age === null ? "" : String(d.age), sex: d.sex, hypertension: d.hypertension, chf: d.chf, mi: d.mi,
+        stroke: d.stroke, arrhythmia: d.arrhythmia, valveDisease: d.valveDisease, respiratoryFailure: d.respiratoryFailure
+      }
+    });
+  }
+
+  formValid(f) {
+    if (!f) return false;
+    return f.name.trim().length > 1 && f.nationalId.trim().length === 9 && f.department.trim().length > 0 && f.bed.trim().length > 0;
+  }
+
+  saveForm() {
+    const f = this.state.form, id = this.state.modal.id;
+    if (!this.formValid(f)) return;
+    const sh = this.currentShift();
+    const who = (f.recordedBy || "").trim() || sh.charge || null;
+    const charge = sh.charge || null;
+    const ageNum = f.age === "" ? null : Math.max(18, Math.min(120, parseInt(f.age, 10) || 18));
+    const next = { age: ageNum, sex: f.sex, hypertension: f.hypertension, chf: f.chf, mi: f.mi, stroke: f.stroke, arrhythmia: f.arrhythmia, valveDisease: f.valveDisease, respiratoryFailure: f.respiratoryFailure };
+    const was = this.state.monitors.find(x => x.id === id);
+    const wasAwaiting = was && was.state === "awaiting_identification";
+    this.patch(id, m => {
+      const log = [];
+      const push = (field, from, to) => { if (from !== to) log.push({ field: field, from: from, to: to, changedAt: this.now(), changedBy: who, shiftCharge: charge }); };
+      push("name", m.patient.name, f.name || null);
+      push("nationalId", m.patient.nationalId, f.nationalId || null);
+      push("department", m.patient.department, f.department || null);
+      push("bed", m.patient.bed, f.bed || null);
+      Object.keys(next).forEach(k => push(k, m.patient.demographics[k], next[k]));
+      m.patient.name = f.name || null; m.patient.nationalId = f.nationalId || null;
+      m.patient.department = f.department || null; m.patient.bed = f.bed || null;
+      m.patient.demographics = next;
+      m.auditLog = log.concat(m.auditLog);
+      if (m.state === "awaiting_identification") m.state = "monitoring";
+    });
+    if (wasAwaiting) this.startAdapter(id);
+    this.setState({ modal: null, form: null });
+  }
+
+  closeMonitor() {
+    const id = this.state.modal.id;
+    const m = this.state.monitors.find(x => x.id === id);
+    if (!m) return;
+    const real = (m.patient.nationalId || "").trim();
+    // With a patient record on the monitor the ID must match exactly; an
+    // unidentified adapter has nothing to delete, so it just closes.
+    if (real !== "" && this.state.dischargeInput.trim() !== real) return;
+    clearTimeout(this.timers["p" + id]); clearTimeout(this.timers["a" + id]); clearTimeout(this.timers["r" + id]); clearTimeout(this.timers["k" + id]);
+    const until = this.now() + 10000;
+    this.patch(id, mm => { mm.state = "closing"; });
+    this.setState(s => ({ closing: Object.assign({}, s.closing, { [id]: until }), modal: null, dischargeInput: "" }));
+    clearTimeout(this.timers["u" + id]);
+    this.timers["u" + id] = setTimeout(() => {
+      this.setState(s => {
+        const c = Object.assign({}, s.closing); delete c[id];
+        return { monitors: s.monitors.filter(x => x.id !== id), closing: c };
+      });
+    }, 10000);
+  }
+
+  undoClose(id) {
+    clearTimeout(this.timers["u" + id]);
+    this.setState(s => { const c = Object.assign({}, s.closing); delete c[id]; return { closing: c }; });
+    this.patch(id, m => { m.state = "monitoring"; });
+    this.startAdapter(id);
+  }
+
+  newAdapter(adapterId) {
+    const i = this.state.adapterSeq;
+    const m = this.makeMonitor(i, null, null, null, null, adapterId);
+    this.setState(s => ({
+      monitors: s.monitors.concat([m]), adapterSeq: s.adapterSeq + 1,
+      modal: { type: "form", id: m.id },
+      form: { step: "id", recordedBy: this.currentShift().charge || "", name: "", nationalId: "", department: "", bed: "", age: "", sex: null, hypertension: null, chf: null, mi: null, stroke: null, arrhythmia: null, valveDisease: null, respiratoryFailure: null }
+    }));
+  }
+
+  setDisconnected(id) {
+    const m = this.state.monitors.find(x => x.id === id);
+    if (!m || m.state === "closing") return;
+    clearTimeout(this.timers["p" + id]); clearTimeout(this.timers["a" + id]); clearTimeout(this.timers["k" + id]);
+    this.patch(id, mm => { mm.state = "disconnected"; });
+    const t = this.t();
+    this.showToast(t.alertDiscTitle, this.fmt(t.alertDisc, { name: m.patient.name || t.unnamed }), "danger");
+  }
+
+  toggleConn(id) {
+    const m = this.state.monitors.find(x => x.id === id);
+    if (!m) return;
+    if (m.state === "disconnected") {
+      clearTimeout(this.timers["r" + id]);
+      this.patch(id, mm => { mm.state = "monitoring"; mm.adapter.lastSeenAt = this.now(); });
+      this.startAdapter(id);
+      const t = this.t();
+      this.showToast(t.alertConnTitle, this.fmt(t.alertConn, { name: m.patient.name || t.unnamed }), "ok");
+    } else {
+      this.setDisconnected(id);
+    }
+  }
+
+  openManual() {
+    const used = {};
+    this.state.monitors.forEach(m => { used[m.adapterId] = true; });
+    const ids = [];
+    for (let k = 40; k < 160 && ids.length < 3; k++) {
+      const id = this.mac(k);
+      if (!used[id] && ids.indexOf(id) < 0) ids.push(id);
+    }
+    this.setState({ modal: { type: "manual" }, manualIds: ids, manualPick: null });
+  }
+
+  TIER_COLOR = { routine: "#6B84A3", watch: "#7FD8E0", urgent: "#F5C56B", critical: "#E8735A" };
+
+  tierLabel(tier) { const t = this.t(); return { routine: t.tierRoutine, watch: t.tierWatch, urgent: t.tierUrgent, critical: t.tierCritical }[tier] || t.tierRoutine; }
+
+  pill(bg, border, color) {
+    return { display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: 600, letterSpacing: ".02em", padding: "5px 10px", borderRadius: "999px", background: bg, border: "1px solid " + border, color: color, whiteSpace: "nowrap" };
+  }
+
+  metricStyle(color, big, rtl) {
+    return { fontSize: big ? "42px" : "34px", lineHeight: "1.02", fontWeight: 600, color: color, fontVariantNumeric: "tabular-nums", letterSpacing: "-.01em", direction: "ltr", unicodeBidi: "isolate", textAlign: rtl ? "right" : "left" };
+  }
+
+  optStyle(active, tone) {
+    const c = tone === "amber" ? "#F5C56B" : "#7FD8E0";
+    return {
+      minWidth: "62px", height: "36px", padding: "0 12px", borderRadius: "9px", cursor: "pointer", fontSize: "12.5px", fontWeight: active ? 700 : 500,
+      border: "1px solid " + (active ? c : "#1E4372"), background: active ? (tone === "amber" ? "rgba(245,197,107,.16)" : "rgba(127,216,224,.16)") : "transparent",
+      color: active ? c : "#A9BDD6"
+    };
+  }
+
+  primaryBtn(enabled, extra) {
+    return Object.assign({
+      height: "44px", padding: "0 22px", borderRadius: "10px", border: "1px solid " + (enabled ? "#7FD8E0" : "#1E4372"),
+      background: enabled ? "#7FD8E0" : "transparent", color: enabled ? "#06162C" : "#3C5A80",
+      fontSize: "13px", fontWeight: 700, cursor: enabled ? "pointer" : "not-allowed", whiteSpace: "nowrap"
+    }, extra || {});
+  }
+
+  demoBtn(enabled, color) {
+    return {
+      flex: "1 1 auto", minWidth: "max-content", height: "32px", padding: "0 9px", borderRadius: "7px", border: "1px solid #1E4372", background: "transparent",
+      color: enabled ? color : "#3C5A80", fontSize: "10.5px", fontWeight: 600, whiteSpace: "nowrap",
+      cursor: enabled ? "pointer" : "not-allowed"
+    };
+  }
+
+  renderVals() {
+    const s = this.state, t = this.t();
+    const rtl = s.lang === "he";
+    const ms = s.monitors.slice().sort((a, b) => {
+      const rank = m => (m.state === "closing" ? 3 : m.state === "disconnected" ? 2 : m.alert ? 0 : 1);
+      return rank(a) - rank(b);
+    });
+
+    const tiles = ms.map(m => {
+      const v = m.vitals, disc = m.state === "disconnected", awaiting = m.state === "awaiting_identification", closing = m.state === "closing";
+      const stateMap = {
+        monitoring: [t.stMonitoring, "#7FD8E0"], predicting: [t.stPredicting, "#F5C56B"],
+        awaiting_identification: [t.stAwaiting, "#6B84A3"], disconnected: [t.stDisconnected, "#E8735A"], closing: [t.stClosing, "#6B84A3"]
+      };
+      const sm = stateMap[m.state] || stateMap.monitoring;
+      const hasData = v.hr !== null;
+      const abpReady = v.abp.status === "ready" && v.abp.systolic !== null;
+      const d = m.patient.demographics;
+      const partial = Object.keys(d).some(k => d[k] === null);
+      const emptyC = "#3C5A80";
+      const until = s.closing[m.id];
+      const news = m.news || null;
+      const tier = m.alert ? m.alert.tier : (news ? news.tier : "routine");
+      const tc = this.TIER_COLOR[tier] || this.TIER_COLOR.routine;
+      const crit = tier === "critical";
+      const rgba = crit ? "232,115,90" : "245,197,107";
+      return {
+        id: m.id,
+        name: m.patient.name || t.unnamed,
+        hasId: !!m.patient.nationalId,
+        nationalId: m.patient.nationalId || "",
+        sub: (m.patient.department || t.noDept) + " · " + (m.patient.bed ? (rtl ? "מיטה " : "Bed ") + m.patient.bed : t.noBed) + " · " + m.adapterId,
+        accent: sm[1],
+        cardStyle: {
+          position: "relative", overflow: "hidden", background: "#0F2745", border: "1px solid " + (disc ? "rgba(232,115,90,.5)" : "#1E4372"),
+          borderRadius: "16px", padding: "16px 16px 14px", display: "flex", flexDirection: "column", gap: "13px", minHeight: "290px",
+          boxShadow: m.alert && !awaiting && !closing ? "0 0 0 1px rgba(245,197,107,.5)" : "none",
+          animation: "vnIn .28s ease-out", opacity: disc ? .85 : 1
+        },
+        pillStyle: this.pill(disc ? "rgba(232,115,90,.13)" : "rgba(127,216,224,.08)", disc ? "rgba(232,115,90,.4)" : "#1E4372", sm[1]),
+        dotStyle: { width: "6px", height: "6px", borderRadius: "50%", background: sm[1], animation: m.state === "predicting" || disc ? "vnBlink 1.2s infinite" : "none" },
+        stateLabel: sm[0],
+        needsForm: awaiting,
+        showEdit: !awaiting,
+        showMetrics: !awaiting,
+        showWaiting: !awaiting && !disc && !closing && !hasData,
+        showDiscBanner: disc,
+        hr: hasData ? String(v.hr) : "—",
+        spo2: hasData ? String(v.spo2) : "—",
+        abp: abpReady ? v.abp.systolic + " / " + v.abp.diastolic : "—",
+        hrStyle: this.metricStyle(hasData ? "#7FD8E0" : emptyC, true, rtl),
+        spo2Style: this.metricStyle(hasData ? "#6FE3C4" : emptyC, true, rtl),
+        abpStyle: this.metricStyle(abpReady ? "#F5C56B" : emptyC, false, rtl),
+        abpComputing: v.abp.status === "computing",
+        abpFailed: v.abp.status === "failed",
+        abpValue: v.abp.status !== "computing" && v.abp.status !== "failed",
+        stamp: hasData ? this.rel(v.packetReceivedAt) : (disc ? this.rel(m.adapter.lastSeenAt) : t.never),
+        partial: partial && !awaiting,
+        battery: m.adapter.battery + "%",
+        rssi: m.adapter.bleRssi + " dBm",
+        rssiTip: t.rssiTip + " · " + t.lastKeepAlive + ": " + this.rel(m.adapter.lastSeenAt),
+        showNews: !!news && hasData && !awaiting && !closing,
+        newsScore: news ? String(news.total) : "0",
+        newsTier: this.tierLabel(news ? news.tier : "routine"),
+        newsStyle: {
+          display: "flex", alignItems: "center", gap: "5px", padding: "3px 8px", borderRadius: "7px", cursor: "help",
+          border: "1px solid " + (news && news.tier !== "routine" ? tc : "#1E4372"),
+          background: news && (news.tier === "urgent" || news.tier === "critical") ? "rgba(" + rgba + ",.12)" : "rgba(127,216,224,.05)",
+          color: news && news.tier !== "routine" ? tc : "#6B84A3", whiteSpace: "nowrap"
+        },
+        showAlert: !!m.alert && !awaiting && !closing,
+        alertColor: crit ? "#E8735A" : "#F5C56B",
+        alertTitle: crit ? t.alertCritical : t.alertUrgent,
+        alertBoxStyle: {
+          display: "flex", alignItems: "center", gap: "10px", borderRadius: "10px", padding: "10px 12px",
+          border: "1px solid rgba(" + rgba + ",.55)", background: "rgba(" + rgba + ",.12)",
+          animation: "vnBlink " + (crit ? "0.9s" : "1.8s") + " infinite"
+        },
+        alertTitleStyle: { fontSize: "12.5px", fontWeight: 700, color: crit ? "#E8735A" : "#F5C56B" },
+        showAlarmAge: !!m.alert && this.now() - m.alert.at >= 10000,
+        alarmAge: m.alert ? t.alarmFor + " " + this.mmss(this.now() - m.alert.at) : "",
+        alarmAgeStyle: { fontSize: "10.5px", fontWeight: 600, color: crit ? "#E8735A" : "#F5C56B", opacity: .8, fontVariantNumeric: "tabular-nums", direction: "ltr", unicodeBidi: "isolate" },
+        alertAckStyle: {
+          flex: "none", height: "34px", padding: "0 13px", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer",
+          border: "1px solid " + (crit ? "#E8735A" : "#F5C56B"), background: "rgba(" + rgba + ",.16)", color: crit ? "#E8735A" : "#F5C56B"
+        },
+        alertDetail: m.alert ? m.alert.flags.map(fl => this.fmtI(t["a" + fl[0].charAt(0).toUpperCase() + fl[0].slice(1)], { v: fl[1], l: fl[2] })).join(" · ") : "",
+        onAck: () => this.patch(m.id, mm => { delete mm.alert; }),
+        closing: closing,
+        undoLeft: until ? String(Math.max(0, Math.ceil((until - this.now()) / 1000))) : "",
+        onUndo: () => this.undoClose(m.id),
+        onEdit: () => this.openForm(m.id),
+        onAudit: () => this.setState({ modal: { type: "audit", id: m.id } }),
+        onDischarge: () => this.setState({ modal: { type: "discharge", id: m.id }, dischargeInput: "" })
+      };
+    });
+
+    const demoRows = ms.filter(m => m.state !== "closing").map(m => {
+      const usable = m.state !== "disconnected" && m.state !== "awaiting_identification";
+      return {
+        name: m.patient.name || t.unnamed,
+        connLabel: m.state === "disconnected" ? t.demoConn : t.demoDisc,
+        packetStyle: this.demoBtn(usable, "#7FD8E0"),
+        failStyle: this.demoBtn(usable, "#F5C56B"),
+        crisisStyle: this.demoBtn(usable, "#E8735A"),
+        onPacket: () => { if (usable) this.deliverPacket(m.id); },
+        onFail: () => { if (usable) this.deliverPacket(m.id, "fail"); },
+        onCrisis: () => { if (usable) this.deliverPacket(m.id, "crisis"); },
+        onToggleConn: () => this.toggleConn(m.id)
+      };
+    });
+
+    const f = s.form;
+    let rows = [];
+    if (f) {
+      rows = this.CONDS.map(pair => {
+        const key = pair[0], label = t[pair[1]];
+        const opts = key === "sex"
+          ? [["male", t.male], ["female", t.female]]
+          : [[true, t.yes], [false, t.no], [null, t.unknown]];
+        return {
+          label: label,
+          opts: opts.map(o => ({
+            label: o[1],
+            style: this.optStyle(f[key] === o[0], o[0] === null ? "amber" : "cyan"),
+            onClick: () => this.setState(st => { const nf = Object.assign({}, st.form); nf[key] = o[0]; return { form: nf }; })
+          }))
+        };
+      });
+    }
+
+    const modal = s.modal;
+    const target = modal && modal.id ? s.monitors.find(x => x.id === modal.id) : null;
+    // The person who typed the change is the attribution; the charge nurse on duty
+    // is context, shown only when the two are different people.
+    const auditRows = target ? target.auditLog.map(e => ({
+      field: e.field,
+      // Laid out as three elements in the reading direction with the arrow mirrored,
+      // so a Hebrew reader sees the transition running the way they read. A single
+      // bidi string here reversed from→to — wrong direction in a clinical record.
+      from: e.from === null ? t.unknown : String(e.from),
+      to: e.to === null ? t.unknown : String(e.to),
+      arrow: rtl ? "←" : "→",
+      when: new Date(e.changedAt).toLocaleString(rtl ? "he-IL" : "en-GB"),
+      by: e.changedBy || "",
+      hasBy: !!e.changedBy,
+      shift: e.shiftCharge && e.shiftCharge !== e.changedBy ? "· " + this.fmt(t.auditShift, { name: e.shiftCharge }) : "",
+      hasShift: !!(e.shiftCharge && e.shiftCharge !== e.changedBy)
+    })) : [];
+
+    const dischargeId = target && target.patient.nationalId ? "ID " + target.patient.nationalId : "";
+    const needsId = !!(target && target.patient.nationalId);
+    const canDischarge = !!target && (needsId ? s.dischargeInput.trim() === target.patient.nationalId : true);
+    const valid = this.formValid(f);
+    const step = f ? f.step : "id";
+
+    const ageNum = f && f.age !== "" ? parseInt(f.age, 10) : null;
+    const ageError = ageNum !== null && (isNaN(ageNum) || ageNum < 18 || ageNum > 120) ? (rtl ? "גיל חייב להיות בין 18 ל-120" : "Age must be between 18 and 120") : "";
+
+    const saveValid = valid && !ageError;
+    const sh = this.currentShift();
+    const recorder = f ? (f.recordedBy || "").trim() : "";
+    const shiftDiffers = !!(recorder && sh.charge && recorder !== sh.charge);
+    const handoverValid = s.handoverName.trim().length > 1;
+    const langBtn = on => ({ width: "48px", height: "100%", border: "none", cursor: "pointer", fontSize: "12.5px", fontWeight: 700, background: on ? "#7FD8E0" : "transparent", color: on ? "#06162C" : "#A9BDD6" });
+    const stepDot = on => ({ width: "7px", height: "7px", borderRadius: "50%", background: on ? "#7FD8E0" : "#1E4372" });
+    const activeN = s.monitors.filter(m => m.state !== "disconnected" && m.state !== "closing").length;
+    const lg = { email: "", password: "", remember: true };
+    if (s.login) {
+      if (typeof s.login.email === "string") lg.email = s.login.email;
+      if (typeof s.login.password === "string") lg.password = s.login.password;
+      lg.remember = s.login.remember !== false;
+    }
+    const loginValid = /.+@.+\..+/.test(lg.email.trim()) && lg.password.length >= 4;
+
+    return {
+      t: t, dir: rtl ? "rtl" : "ltr",
+      showLogin: !s.user, showApp: !!s.user,
+      login: lg,
+      onLoginEmail: e => { const v = e.target.value; this.setState(st => ({ login: Object.assign({}, st.login, { email: v }) })); },
+      onLoginPassword: e => { const v = e.target.value; this.setState(st => ({ login: Object.assign({}, st.login, { password: v }) })); },
+      onToggleRemember: () => this.setState(st => ({ login: Object.assign({}, st.login, { remember: !st.login.remember }) })),
+      rememberStyle: { display: "flex", alignItems: "center", gap: "8px", border: "none", background: "transparent", color: "#A9BDD6", fontSize: "12px", cursor: "pointer", padding: 0 },
+      rememberBoxStyle: {
+        width: "16px", height: "16px", borderRadius: "4px", display: "grid", placeItems: "center",
+        border: "1px solid " + (lg.remember ? "#7FD8E0" : "#1E4372"),
+        background: lg.remember ? "rgba(127,216,224,.18)" : "transparent",
+        color: lg.remember ? "#7FD8E0" : "transparent"
+      },
+      signInStyle: this.primaryBtn(loginValid, { height: "46px" }),
+      onSignIn: () => {
+        if (!loginValid) return;
+        const u = this.userFromEmail(lg.email);
+        this.setState(st => ({ user: u, rememberMe: lg.remember, shift: st.shift || { charge: u.name, key: this.autoShift(), startedAt: this.now() } }));
+      },
+      onSsoSignIn: () => {
+        const u = { name: "Dana Levi", role: "Charge nurse · Internal A" };
+        this.setState(st => ({ user: u, rememberMe: lg.remember, shift: st.shift || { charge: u.name, key: this.autoShift(), startedAt: this.now() } }));
+      },
+      onSignOut: () => this.setState({ user: null, login: { email: "", password: "", remember: true } }),
+      shiftLabel: this.shiftName(sh.key), shiftCharge: sh.charge || (s.user ? s.user.name : ""),
+      handoverSince: this.fmt(t.handoverSince, { t: this.clockTime(sh.startedAt) }),
+      onOpenHandover: () => this.setState({ modal: { type: "handover" }, handoverName: "", handoverShift: sh.key }),
+      showHandover: !!(modal && modal.type === "handover"),
+      handoverName: s.handoverName,
+      onHandoverName: e => { const v = e.target.value; this.setState({ handoverName: v }); },
+      shiftOpts: ["morning", "evening", "night"].map(k => ({
+        label: this.shiftName(k),
+        style: this.optStyle((s.handoverShift || sh.key) === k, "cyan"),
+        onClick: () => this.setState({ handoverShift: k })
+      })),
+      handoverBtnStyle: this.primaryBtn(handoverValid),
+      onConfirmHandover: () => {
+        if (!handoverValid) return;
+        const name = s.handoverName.trim();
+        this.setState({
+          shift: { charge: name, key: s.handoverShift || sh.key, startedAt: this.now() },
+          modal: null, handoverName: ""
+        });
+        this.showToast(t.handoverToastTitle, this.fmt(t.handoverToast, { name: name }), "ok");
+      },
+      showShiftNote: shiftDiffers,
+      shiftNote: shiftDiffers ? "· " + this.fmt(t.onShiftOf, { name: sh.charge }) : "",
+      onRecordedBy: e => { const v = e.target.value; this.setState(st => ({ form: Object.assign({}, st.form, { recordedBy: v }) })); },
+      userName: s.user ? s.user.name : "",
+      userRole: s.user && s.user.role ? s.user.role : "—",
+      headerStyle: {
+        display: "flex", alignItems: "center", gap: "14px", rowGap: "10px", flexWrap: "wrap", padding: "14px 22px",
+        paddingInlineEnd: s.demoOpen ? "342px" : "22px", borderBottom: "1px solid #1E4372", background: "#0A1F3E",
+        position: "sticky", top: "0", zIndex: 20, transition: "padding-inline-end .28s ease"
+      },
+      mainStyle: { flex: 1, padding: "22px", paddingInlineEnd: s.demoOpen ? "342px" : "22px", transition: "padding-inline-end .28s ease" },
+      activeCount: activeN === 1 ? t.activeOne : this.fmt(t.activeMany, { n: activeN }),
+      serverDown: s.serverDown, isEmpty: s.monitors.length === 0, tiles: tiles, demoRows: demoRows,
+      enBtn: langBtn(!rtl), heBtn: langBtn(rtl),
+      onEN: () => this.setState({ lang: "en" }), onHE: () => this.setState({ lang: "he" }),
+      soundOn: !s.muted, soundOff: !!s.muted,
+      muteStyle: {
+        width: "44px", height: "44px", display: "grid", placeItems: "center", borderRadius: "10px",
+        border: "1px solid " + (s.muted ? "#1E4372" : "rgba(245,197,107,.5)"), background: s.muted ? "transparent" : "rgba(245,197,107,.1)",
+        color: s.muted ? "#6B84A3" : "#F5C56B", cursor: "pointer"
+      },
+      onToggleMute: () => this.setState(st => ({ muted: !st.muted })),
+      onSync: () => this.showToast(t.syncToastTitle, this.fmt(t.syncToast, { n: s.monitors.length }), "info"),
+      onManualOpen: () => this.openManual(),
+      showManual: !!(modal && modal.type === "manual"),
+      manualRows: s.manualIds.map(id => ({
+        id: id, meta: t.manualAvailable,
+        style: {
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", height: "46px", padding: "0 14px",
+          borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600, textAlign: "start",
+          border: "1px solid " + (s.manualPick === id ? "#7FD8E0" : "#1E4372"),
+          background: s.manualPick === id ? "rgba(127,216,224,.14)" : "#0F2745",
+          color: s.manualPick === id ? "#7FD8E0" : "#A9BDD6"
+        },
+        onPick: () => this.setState({ manualPick: id })
+      })),
+      manualBtnStyle: this.primaryBtn(!!s.manualPick),
+      onConfirmManual: () => { if (s.manualPick) this.newAdapter(s.manualPick); },
+      onSpawnFromManual: () => this.newAdapter(),
+      demoStyle: {
+        position: "fixed", top: "0", bottom: "0", insetInlineEnd: s.demoOpen ? "0" : "-340px", width: "320px", background: "#0A1F3E",
+        borderInlineStart: "1px solid #1E4372", zIndex: 40, display: "flex", flexDirection: "column", transition: "inset-inline-end .28s ease", boxShadow: "0 0 40px rgba(0,0,0,.35)"
+      },
+      demoClosed: !s.demoOpen,
+      onToggleDemo: () => this.setState(st => ({ demoOpen: !st.demoOpen })),
+      onNewAdapter: () => this.newAdapter(),
+      onToggleServer: () => this.setState(st => ({ serverDown: !st.serverDown })),
+      onReset: () => this.seed(),
+      showForm: !!(modal && modal.type === "form" && f),
+      showStepId: !!(f && step === "id"),
+      showStepDemo: !!(f && step === "demo"),
+      formTitle: step === "id" ? t.formTitleId : t.formTitleDemo,
+      step1Dot: stepDot(true), step2Dot: stepDot(step === "demo"),
+      form: f || { name: "", nationalId: "", department: "", bed: "", age: "", recordedBy: "" },
+      formAdapter: target ? target.adapterId : "",
+      rows: rows, ageError: ageError, hasAgeError: !!ageError,
+      requiredMsg: valid ? "" : t.requiredMsg,
+      nextBtnStyle: this.primaryBtn(valid),
+      saveBtnStyle: this.primaryBtn(saveValid),
+      onNextStep: () => { if (valid) this.setState(st => ({ form: Object.assign({}, st.form, { step: "demo" }) })); },
+      onBackStep: () => this.setState(st => ({ form: Object.assign({}, st.form, { step: "id" }) })),
+      onName: e => { const v = e.target.value; this.setState(st => ({ form: Object.assign({}, st.form, { name: v }) })); },
+      onNationalId: e => { const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 9); this.setState(st => ({ form: Object.assign({}, st.form, { nationalId: v }) })); },
+      onDept: e => { const v = e.target.value; this.setState(st => ({ form: Object.assign({}, st.form, { department: v }) })); },
+      onBed: e => { const v = e.target.value; this.setState(st => ({ form: Object.assign({}, st.form, { bed: v }) })); },
+      onAge: e => { const v = e.target.value.replace(/[^0-9]/g, ""); this.setState(st => ({ form: Object.assign({}, st.form, { age: v }) })); },
+      onSaveForm: () => { if (saveValid) this.saveForm(); },
+      onCloseModal: () => this.setState({ modal: null, form: null, dischargeInput: "", manualPick: null }),
+      showAudit: !!(modal && modal.type === "audit"),
+      auditRows: auditRows, auditEmpty: auditRows.length === 0 ? t.auditEmptyTxt : "",
+      showDischarge: !!(modal && modal.type === "discharge"),
+      dischargeName: target ? (target.patient.name || t.unnamed) : "",
+      dischargeId: dischargeId, dischargeInput: s.dischargeInput,
+      dischargeNeedsId: needsId, dischargeNoId: !!target && !needsId,
+      dischargeBody: needsId ? t.dischargeBody : t.dischargeNoIdBody,
+      onDischargeInput: e => { const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 9); this.setState({ dischargeInput: v }); },
+      dischargeBtnStyle: {
+        height: "44px", padding: "0 22px", borderRadius: "10px", border: "1px solid " + (canDischarge ? "#E8735A" : "#1E4372"),
+        background: canDischarge ? "#E8735A" : "transparent", color: canDischarge ? "#2A0B05" : "#3C5A80",
+        fontSize: "13px", fontWeight: 700, cursor: canDischarge ? "pointer" : "not-allowed"
+      },
+      onConfirmDischarge: () => this.closeMonitor(),
+      toast: !!s.toast, toastTitle: s.toast ? s.toast.title : "", toastBody: s.toast ? s.toast.body : "",
+      toastStyle: {
+        // Below the modal layer (60): a transient toast must never sit over a dialog.
+        position: "fixed", top: "74px", insetInlineEnd: s.demoOpen ? "342px" : "20px", transition: "inset-inline-end .28s ease", zIndex: 55, background: "#16345C",
+        border: "1px solid " + (s.toast && s.toast.tone === "danger" ? "#E8735A" : s.toast && s.toast.tone === "ok" ? "#7FD8E0" : "#1E4372"),
+        borderInlineStartWidth: "3px", borderRadius: "11px", padding: "12px 16px", maxWidth: "320px",
+        display: "flex", flexDirection: "column", gap: "3px", animation: "vnIn .2s ease-out"
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>
