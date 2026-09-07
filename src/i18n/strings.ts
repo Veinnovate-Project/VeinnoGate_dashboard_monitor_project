@@ -1,0 +1,80 @@
+export type Locale = "en" | "he";
+
+export const strings = {
+  en: {
+    bpUnavailableSqi: "BP unavailable — insufficient signal quality",
+    bpUnavailableRecalibrate: "BP unavailable — recalibration required",
+    bpUnavailableInferenceError: "Inference unavailable",
+    deviceDisconnected: "Device disconnected",
+    dataAge: "Data age",
+    previousValidReading: "Previous valid reading",
+    calibrationDueSoon: "Calibration due soon",
+    calibrationExpired: "Calibration expired",
+    calibrationCurrent: "Calibration current",
+    spo2Unavailable: "Unavailable",
+    unsupportedSchema: "Unsupported data format from Jetson — update the dashboard",
+    unsupportedState: "Unrecognized backend state — showing no values",
+    awaitingFirstReading: "Waiting for first reading…",
+    connectionReconnecting: "Reconnecting to Jetson…",
+    connectionClosed: "Not connected",
+    pairingTitle: "Adapter pairing",
+    pairingPatientIdLabel: "Patient ID",
+    pairingStartButton: "Add adapter",
+    pairingCancelButton: "Cancel",
+    pairingBackButton: "Back",
+    pairingWindowClosed: "The pairing window is no longer active. Start again with Add adapter.",
+    pairingInstructionOn: "Switch exactly one adapter from OFF to ON now.",
+    pairingWaitingForAdapter: "Waiting for adapter…",
+    pairingAutoDetectedCode: "Detected code",
+    pairingConfirmMatchPrompt: "Confirm this code matches the one printed on the adapter housing/package, then assign.",
+    pairingConfirmAndAssignButton: "Confirm and assign",
+    pairingZeroOrMultiple: "No single new adapter was detected. Enter the printed code manually.",
+    pairingManualCodeLabel: "Adapter code (e.g. VN-001)",
+    pairingAssignButton: "Assign",
+    pairingAssignedSuccess: "Adapter assigned and session opened. Measurement has not started yet.",
+    pairingEndSessionButton: "End session",
+    pairingSessionEnded: "Session ended. Adapter marked consumed.",
+    pairingGenericError: "Assignment blocked for safety reasons."
+  },
+  he: {
+    bpUnavailableSqi: "לחץ דם אינו זמין — איכות אות לא מספקת",
+    bpUnavailableRecalibrate: "לחץ דם אינו זמין — נדרשת כיול מחדש",
+    bpUnavailableInferenceError: "ההיסק אינו זמין",
+    deviceDisconnected: "המכשיר מנותק",
+    dataAge: "גיל הנתונים",
+    previousValidReading: "קריאה תקפה קודמת",
+    calibrationDueSoon: "כיול נדרש בקרוב",
+    calibrationExpired: "הכיול פג תוקף",
+    calibrationCurrent: "הכיול בתוקף",
+    spo2Unavailable: "לא זמין",
+    unsupportedSchema: "פורמט נתונים לא נתמך מה-Jetson — יש לעדכן את הדשבורד",
+    unsupportedState: "מצב לא מוכר מהשרת — לא מוצגים ערכים",
+    awaitingFirstReading: "ממתין לקריאה ראשונה…",
+    connectionReconnecting: "מתחבר מחדש ל-Jetson…",
+    connectionClosed: "לא מחובר",
+    pairingTitle: "שיוך מתאם",
+    pairingPatientIdLabel: "מספר מטופל/ת",
+    pairingStartButton: "הוספת מתאם",
+    pairingCancelButton: "ביטול",
+    pairingBackButton: "חזרה",
+    pairingWindowClosed: "חלון השיוך אינו פעיל. התחילו שוב באמצעות הוספת מתאם.",
+    pairingInstructionOn: "הפעילו כעת מתאם אחד בלבד — העבירו את המתג מ-OFF ל-ON.",
+    pairingWaitingForAdapter: "ממתין למתאם…",
+    pairingAutoDetectedCode: "זוהה קוד",
+    pairingConfirmMatchPrompt: "ודאו שהקוד תואם לקוד המודפס על גבי המתאם/האריזה, ולאחר מכן שייכו.",
+    pairingConfirmAndAssignButton: "אישור ושיוך",
+    pairingZeroOrMultiple: "לא זוהה מתאם חדש יחיד. הזינו את הקוד המודפס באופן ידני.",
+    pairingManualCodeLabel: "קוד מתאם (למשל VN-001)",
+    pairingAssignButton: "שיוך",
+    pairingAssignedSuccess: "המתאם שויך וההפעלה נפתחה. המדידה טרם החלה.",
+    pairingEndSessionButton: "סיום הפעלה",
+    pairingSessionEnded: "ההפעלה הסתיימה. המתאם סומן כמנוצל.",
+    pairingGenericError: "השיוך נחסם מסיבות בטיחות."
+  }
+} as const;
+
+export type StringKey = keyof typeof strings.en;
+
+export function t(locale: Locale, key: StringKey): string {
+  return strings[locale][key];
+}

@@ -1,0 +1,301 @@
+{
+  "bundle_name": "VeinoGate_Dashboard_integration_ready",
+  "bundle_version": "0.1.0",
+  "component_type": "dashboard",
+  "generated_at_utc": "2026-09-03T09:02:39.001Z",
+  "entry_point": "index.html",
+  "demo_entry_point": "demo.html",
+  "dependency_lock_file": "package-lock.json",
+  "schemas": {
+    "jetson-result": {
+      "file": "schemas/jetson-result.schema.json",
+      "version": "1.0.0"
+    },
+    "jetson-ws-envelope": {
+      "file": "schemas/jetson-ws-envelope.schema.json",
+      "version": "1.0.0"
+    },
+    "runtime-config": {
+      "file": "schemas/runtime-config.schema.json",
+      "version": "1.0.0"
+    }
+  },
+  "expected_backend_interface_version": "1.0.0",
+  "runtime_config_example": {
+    "file": "config/runtime-config.example.json",
+    "note": "Copy to a deployed runtime-config.json and replace only deployment-specific non-secret values; never commit real deployment values into this bundle."
+  },
+  "excluded_from_bundle": {
+    "note": "This manifest describes every transferable source, config, schema, script, and test file. The directories below are intentionally absent from the transferable bundle and are not listed in `files`.",
+    "directories": [
+      {
+        "path": "node_modules/",
+        "reason": "Installed dependencies -- regenerate with `npm ci` against the committed package-lock.json."
+      },
+      {
+        "path": "dist/",
+        "reason": "Generated production build output -- regenerate with `npm run build`."
+      },
+      {
+        "path": "dist-demo/",
+        "reason": "Generated demo build output -- regenerate with `npm run build:demo`."
+      },
+      {
+        "path": "coverage/",
+        "reason": "Generated test-coverage output, if produced locally."
+      },
+      {
+        "path": ".vite/",
+        "reason": "Vite's local dependency-optimization cache."
+      },
+      {
+        "path": "public/",
+        "reason": "Deployment-injected runtime-config.json lives here once created by the integration engineer (see README §2) -- it is never part of the transferable source bundle."
+      }
+    ]
+  },
+  "asset_provenance": [
+    {
+      "path": "assets/veinnovate-logo.jpeg",
+      "source": "Copied unmodified from the historical VeinnoGate dashboard project (same file, verified identical SHA-1 across all prior copies in the source repository).",
+      "license": "Internal Veinnovate project asset; usage limited to Veinnovate-owned products."
+    }
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "size_bytes": 55,
+      "sha256": "5ef68ae73fc4260dcf72fa84bc92183d17c9f154124c8a4fbc19bf7c3a43218e"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 17976,
+      "sha256": "2793c3f4cb15028f3854a721fbb19be77a656a0a525e2fa574243bd29e6b2762"
+    },
+    {
+      "path": "assets/veinnovate-logo.jpeg",
+      "size_bytes": 40588,
+      "sha256": "dd3be84726bdb322782380575e8f65e00d94f86cbeb139e7782976218b9e6d9b"
+    },
+    {
+      "path": "config/runtime-config.example.json",
+      "size_bytes": 302,
+      "sha256": "46b0a3e29993447431e5ee8694fb301c107386385bcf9098ff65db34387f2dae"
+    },
+    {
+      "path": "demo.html",
+      "size_bytes": 621,
+      "sha256": "a375f7ad6e2823989c82b919db4d41fbcda75932f1ffad9f07cf31298505d228"
+    },
+    {
+      "path": "index.html",
+      "size_bytes": 404,
+      "sha256": "088c30b18b3ef592704ead4a073b3bc801089690c7e47ca91e92b430807f760b"
+    },
+    {
+      "path": "package-lock.json",
+      "size_bytes": 51391,
+      "sha256": "1a111313f84e7a9205ba3f708ad8a7b3167afc8a51775f1c9941b86782832165"
+    },
+    {
+      "path": "package.json",
+      "size_bytes": 1125,
+      "sha256": "669638160a1156f8c62d696c29e63be2ae154f1ad4aecdaa35bc29067f4633d6"
+    },
+    {
+      "path": "schemas/jetson-result.schema.json",
+      "size_bytes": 9429,
+      "sha256": "ee165bf6851a7950754c4fa5fdf679f26ec4b38b480eaf6999205ebb6f667b1f"
+    },
+    {
+      "path": "schemas/jetson-ws-envelope.schema.json",
+      "size_bytes": 1775,
+      "sha256": "11047685bcece0ef79a224175501ddf3ae70676cef2958a65548e92e6f63c444"
+    },
+    {
+      "path": "schemas/runtime-config.schema.json",
+      "size_bytes": 1591,
+      "sha256": "6c7322634f3d0fc8a86235da5a657c4d054a46aec4dcff3a240a15b7af739e57"
+    },
+    {
+      "path": "scripts/check-no-random-in-prod.mjs",
+      "size_bytes": 1281,
+      "sha256": "6af7274c4baa4cc6e38dd4a9408dcf593589cdf345ed42591824735bddad853c"
+    },
+    {
+      "path": "scripts/check-schema-drift.mjs",
+      "size_bytes": 2417,
+      "sha256": "4e6733fa81661790eafcf9bb0f16030862e41cffab85b04d4cbf0ce9daf4fabd"
+    },
+    {
+      "path": "scripts/generate-manifest.mjs",
+      "size_bytes": 3824,
+      "sha256": "5cc9ee1ca823c87a1a7748150cc914f257be45e4b0eaa2b83c3f593c1e706351"
+    },
+    {
+      "path": "src/api/identityClient.ts",
+      "size_bytes": 5239,
+      "sha256": "cc5ba45f005b8fb9b2e74b8565e6e715709c52b8e95d2edbe6a2f2e69819cdee"
+    },
+    {
+      "path": "src/api/jetsonClient.ts",
+      "size_bytes": 1215,
+      "sha256": "857d76ad840e8035ad9f032f1ebd3a782c8c302c57b20715480d3c94ccb425ec"
+    },
+    {
+      "path": "src/api/jetsonSocket.ts",
+      "size_bytes": 2635,
+      "sha256": "5f566e5c0f611f133c944d4c4537fe9f6553e45ad99a44838a7507c2f6d8e4d6"
+    },
+    {
+      "path": "src/components/AdapterPairingView.ts",
+      "size_bytes": 8758,
+      "sha256": "f2a2da570f87003432b897821499637ca92f794c0064cc6641eaef9162fdc70e"
+    },
+    {
+      "path": "src/components/DashboardView.ts",
+      "size_bytes": 5278,
+      "sha256": "a22ab992534009d939438bcee4a42f8f7ab8faaebe2c4a46bf36daebd8138a29"
+    },
+    {
+      "path": "src/config/runtimeConfig.ts",
+      "size_bytes": 2308,
+      "sha256": "9b33d4f821ceaece55ac30293bc2bcf31d5f589f78a4de5bacd6987ed38cfc74"
+    },
+    {
+      "path": "src/demo/demoDataSource.ts",
+      "size_bytes": 2710,
+      "sha256": "5ab14598424f7fe7484eb01e2d64353ec5687352abdc7829ff74bd64380e2766"
+    },
+    {
+      "path": "src/i18n/strings.ts",
+      "size_bytes": 4478,
+      "sha256": "71d534c6c9018b794294870aa0ca8d89754a2f7308c2eea8fd2335f942ee47d0"
+    },
+    {
+      "path": "src/main.demo.ts",
+      "size_bytes": 741,
+      "sha256": "058e589f1cb8f9c5fe93ec9beea187cb05331c11877e2f4de632148aa166618c"
+    },
+    {
+      "path": "src/main.ts",
+      "size_bytes": 2422,
+      "sha256": "314c92031e6a4887c06834dba4d4bafa6b2bca74d0ca2312768d0b6e42c17b96"
+    },
+    {
+      "path": "src/state/calibrationDisplay.ts",
+      "size_bytes": 1836,
+      "sha256": "9e2bec228c6cd70173804689af5d47952205fefbe1721e9948d0d855597b5b59"
+    },
+    {
+      "path": "src/state/deriveUiState.ts",
+      "size_bytes": 1036,
+      "sha256": "30925aa3b0dfc5c077284f5d939e3f496a87a40c70bd84e11f58a5575b711d12"
+    },
+    {
+      "path": "src/state/messageGuard.ts",
+      "size_bytes": 2592,
+      "sha256": "fa8fd4d427a41d27635cbde7a2c20e38d8094beb98992ac48070dc13977c05b7"
+    },
+    {
+      "path": "src/state/resultTypes.ts",
+      "size_bytes": 2735,
+      "sha256": "139a6ed25eb3120d501962d282348034b1d044723e632ebc7e1685f2e3e4c08b"
+    },
+    {
+      "path": "src/state/store.ts",
+      "size_bytes": 4599,
+      "sha256": "33f1541751d239bf55f6cb65c039b7f32d93c4a9ae2ce617290b9318d08d7c13"
+    },
+    {
+      "path": "src/state/validateResult.ts",
+      "size_bytes": 1629,
+      "sha256": "72ec0fa33efe74378954f9588fb684fcff92ba669cb7b358922360f2bc9549da"
+    },
+    {
+      "path": "src/styles/dashboard.css",
+      "size_bytes": 2063,
+      "sha256": "439a2c91e5b1dd23fc39c3b65de4034624634b9a3ed60da2263d56bef71cefb8"
+    },
+    {
+      "path": "tests/adapterPairingView.test.ts",
+      "size_bytes": 7589,
+      "sha256": "9c6c95de9d05c7d544ec2654e9385e425669f673f48ea2a22055c81158ab0482"
+    },
+    {
+      "path": "tests/calibrationBoundaries.test.ts",
+      "size_bytes": 1853,
+      "sha256": "2ff0db65979979d3518a0986518150af5a84be1c23ed8ce92390844f7706cc6c"
+    },
+    {
+      "path": "tests/demoIsolation.test.ts",
+      "size_bytes": 1611,
+      "sha256": "9a6aea43e1369c65fe36a662636e0380a92931be99824bac61e205c086bd6a20"
+    },
+    {
+      "path": "tests/identityClient.test.ts",
+      "size_bytes": 4824,
+      "sha256": "51e785192951358b54fcb8deed4d684156fe029b34b62ef6f184b59c34d06bb2"
+    },
+    {
+      "path": "tests/messageGuard.test.ts",
+      "size_bytes": 2193,
+      "sha256": "cc62d0740745a60907b972527bbedfd2fe8587830c0b1b8888abf4ad77859c1e"
+    },
+    {
+      "path": "tests/messages.test.ts",
+      "size_bytes": 2525,
+      "sha256": "bd4a469fa07a747e70a4e0829e422992ecf277eea70f24c6bc0dcacffb2fc38b"
+    },
+    {
+      "path": "tests/mockServer/fixtures.d.mts",
+      "size_bytes": 170,
+      "sha256": "195677ec11c0a7d2c10084a8ea4a69a80cfa6eebc2c09177b7cb09373e47b3ba"
+    },
+    {
+      "path": "tests/mockServer/fixtures.mjs",
+      "size_bytes": 2679,
+      "sha256": "60ae4954dd9ab396dc1507cfd59338b0c70720ebca0d0f69b7531803ea0d7b20"
+    },
+    {
+      "path": "tests/mockServer/runtime-config.test.json",
+      "size_bytes": 277,
+      "sha256": "ecac18f1a10986b4367f655ada68ec614e16ad2b059fdbd18f7c0661bedb4b17"
+    },
+    {
+      "path": "tests/mockServer/server.mjs",
+      "size_bytes": 1675,
+      "sha256": "d4c0dd5439c6f5109a6521dca77572e8bab2e8840db3a663e3f7f526404e1a0e"
+    },
+    {
+      "path": "tests/runtimeConfig.test.ts",
+      "size_bytes": 2830,
+      "sha256": "3aade23d855c094931a1793b9120a2327c9c56917cc7356189c70d4b244c8415"
+    },
+    {
+      "path": "tests/spo2.test.ts",
+      "size_bytes": 1382,
+      "sha256": "68941ff027298fcf8081a31bd754234c06bfa6df55eabd6e808bd00b0d2a5492"
+    },
+    {
+      "path": "tests/store.test.ts",
+      "size_bytes": 2620,
+      "sha256": "11a29b4d49e91b35a6d1c98fe025a80e71e4ee6b685c103951ccf11171822e9e"
+    },
+    {
+      "path": "tests/transportDisconnect.test.ts",
+      "size_bytes": 2575,
+      "sha256": "b4187202b244f8e8415511b00b9c8571243cbc6545c1ed333d6c7d7f749e696e"
+    },
+    {
+      "path": "tsconfig.json",
+      "size_bytes": 572,
+      "sha256": "4cd8d4143aae6d84f9d197f1b6aef2392421888426790f68fad32df107a46ac5"
+    },
+    {
+      "path": "vite.config.ts",
+      "size_bytes": 692,
+      "sha256": "848489599df9b9e14a6f03b06d801c0cc2ac2e9f3e78d82556a44d01d6b54166"
+    }
+  ]
+}
