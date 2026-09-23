@@ -98,11 +98,26 @@ export function renderDashboard(state: DisplayState, locale: Locale, socketStatu
 }
 
 function renderHrSpo2(result: NonNullable<DisplayState["current"]>, locale: Locale): string {
-  const spo2Text = result.spo2.status === "VALID" ? `${result.spo2.pct}%` : t(locale, "spo2Unavailable");
+  const hrKnown = result.hr.valid && result.hr.bpm !== null;
+  const spo2Known = result.spo2.status === "VALID" && result.spo2.pct !== null;
   return `
-    <div class="vn-hr-spo2-row">
-      <div><div class="vn-metric-label">HR</div><div class="vn-metric-value">${result.hr.valid && result.hr.bpm !== null ? `${result.hr.bpm} bpm` : "—"}</div></div>
-      <div><div class="vn-metric-label">SpO₂</div><div class="vn-metric-value">${escapeHtml(spo2Text)}</div></div>
+    <div class="vn-metric-grid">
+      <div class="vn-metric-cell">
+        <div class="vn-metric-icon-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S3.8 15.6 3.8 10.2A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 8.2 2.2c0 5.4-8.2 10.3-8.2 10.3z"></path></svg>
+          <span class="vn-metric-name">HR</span>
+        </div>
+        <div class="vn-metric-value${hrKnown ? "" : " vn-metric-value--muted"}">${hrKnown ? result.hr.bpm : "—"}</div>
+        <div class="vn-metric-unit">BPM</div>
+      </div>
+      <div class="vn-metric-cell">
+        <div class="vn-metric-icon-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg>
+          <span class="vn-metric-name">SpO₂</span>
+        </div>
+        <div class="vn-metric-value${spo2Known ? "" : " vn-metric-value--muted"}">${spo2Known ? result.spo2.pct : "—"}</div>
+        <div class="vn-metric-unit">${spo2Known ? "%" : escapeHtml(t(locale, "spo2Unavailable"))}</div>
+      </div>
     </div>
   `;
 }

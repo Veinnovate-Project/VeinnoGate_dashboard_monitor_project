@@ -8,6 +8,7 @@ const target = process.env.BUNDLE_TARGET === "demo" ? "demo" : "production";
 
 export default defineConfig({
   root: __dirname,
+  publicDir: resolve(__dirname, "assets"),
   build: {
     outDir: target === "demo" ? "dist-demo" : "dist",
     rollupOptions: {

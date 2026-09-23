@@ -32,13 +32,21 @@ export class AdapterPairingController {
   private errorText: string | null = null;
   private pollHandle: ReturnType<typeof setInterval> | null = null;
 
+  private locale: Locale;
+
   constructor(
     private readonly container: HTMLElement,
     private readonly client: IdentityApiClient,
-    private readonly locale: Locale = "he"
+    initialLocale: Locale = "he"
   ) {
+    this.locale = initialLocale;
     this.container.addEventListener("click", (e) => this.onClick(e));
     this.container.addEventListener("input", (e) => this.onInput(e));
+    this.render();
+  }
+
+  setLocale(locale: Locale): void {
+    this.locale = locale;
     this.render();
   }
 
@@ -217,9 +225,14 @@ function renderPairingPanel(phase: Phase, patientId: string, manualCode: string,
       break;
   }
 
-  return `<div class="vn-panel vn-pairing" dir="${dir}">
-    <div class="vn-tile-title">${esc(t(locale, "pairingTitle"))}</div>
-    ${body}
-    ${errorHtml}
+  return `<div class="vn-side-panel vn-pairing" dir="${dir}">
+    <div class="vn-side-panel-header">
+      <span class="vn-side-panel-dot"></span>
+      <div class="vn-side-panel-title">${esc(t(locale, "pairingTitle"))}</div>
+    </div>
+    <div class="vn-side-panel-body">
+      ${body}
+      ${errorHtml}
+    </div>
   </div>`;
 }

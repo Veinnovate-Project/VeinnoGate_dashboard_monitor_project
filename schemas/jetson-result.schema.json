@@ -154,6 +154,7 @@
               "MALFORMED_PACKET",
               "DUPLICATE_OR_REORDERED_SAMPLE",
               "PACKET_LOSS",
+              "FIFO_OVERFLOW",
               "SATURATION_FLAG",
               "CLIPPING",
               "CONTACT_CHANGED",
