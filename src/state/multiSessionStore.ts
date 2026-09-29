@@ -1,16 +1,29 @@
 import { VitalsStore, type DisplayState } from "./store";
 import type { SocketStatus } from "../api/jetsonSocket";
+import type { AssignmentRecord } from "../api/identityClient";
 
 /**
- * Operational (non-clinical) labels known from the assignment event itself.
- * `bed`/`department` have no backend contract field yet, so they live only
- * in this browser tab's memory and are lost on reload -- never persisted.
+ * Tile labels from the assignment record (identity contract 1.1.0 profile),
+ * never from the vitals stream. Tab memory only -- after a reload they are
+ * re-fetched from `/v1/identity/sessions/active`, never browser storage.
  */
 export interface TileMeta {
   patientId: string;
   shortCode: string;
+  name: string | null;
   bed: string | null;
   department: string | null;
+}
+
+export function tileMetaFromAssignment(a: AssignmentRecord): TileMeta {
+  const p = a.profile;
+  return {
+    patientId: a.patient_id,
+    shortCode: a.short_code,
+    name: p ? `${p.first_name} ${p.last_name}` : null,
+    bed: p?.bed ?? null,
+    department: p?.department ?? null
+  };
 }
 
 export interface TileState {

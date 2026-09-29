@@ -95,11 +95,12 @@ export function renderTileGrid(tiles: TileState[], locale: Locale, socketStatus:
   const cards = sorted
     .map((tile) => {
       const patientId = tile.meta?.patientId ?? tile.display.current?.patient_id ?? tile.sessionId;
+      const patientLabel = tile.meta?.name ? `${tile.meta.name} (${patientId})` : patientId;
       const discharge = dischargeStatus.get(tile.sessionId);
       return `
       <article class="vn-tile" dir="${dir}" data-session-id="${escapeHtml(tile.sessionId)}">
         <div class="vn-tile-header">
-          <span class="vn-tile-patient">${escapeHtml(t(locale, "patientLabel"))}: ${escapeHtml(patientId)}</span>
+          <span class="vn-tile-patient">${escapeHtml(t(locale, "patientLabel"))}: ${escapeHtml(patientLabel)}</span>
           ${renderNews2Chip(tile, locale)}
           <button class="vn-tile-discharge" data-action="discharge-tile" data-session-id="${escapeHtml(tile.sessionId)}"${discharge === "pending" ? " disabled" : ""}>${escapeHtml(t(locale, discharge === "pending" ? "dischargePending" : "dischargeButton"))}</button>
         </div>

@@ -21,10 +21,20 @@ class FakeElement {
 
 const flush = () => new Promise((r) => setTimeout(r, 0));
 
+// Synthetic, checksum-valid identity -- never a real person.
+function fillProfile(el: FakeElement, code: string, patientId: string): void {
+  el.field(code, "patientId", patientId);
+  el.field(code, "firstName", "Test");
+  el.field(code, "lastName", "Patient");
+  el.field(code, "nationalId", "000000018");
+  el.field(code, "age", "54");
+  el.field(code, "sex", "F");
+}
+
 function fakeClient(live: Array<{ short_code: string; status: string }>) {
   return {
     listLive: vi.fn(async () => ({ live: live.map((e) => ({ hardware_uid: null, ...e })) as any })),
-    startPairing: vi.fn(async (patientId: string) => ({ window_id: `w_${patientId}` }) as any),
+    startPairing: vi.fn(async (patientId: string, _profile?: unknown) => ({ window_id: `w_${patientId}` }) as any),
     assign: vi.fn(async (windowId: string, shortCode: string) => ({
       assignment: { patient_id: windowId.slice(2), short_code: shortCode },
       session: { session_id: `s_${shortCode}` }
@@ -51,7 +61,7 @@ describe("IntakeModalController", () => {
     expect(el.innerHTML).not.toContain("VN-003");
   });
 
-  it("assigns each adapter to its own patient without cross-talk and reports tile meta", async () => {
+  it("assigns each adapter to its own patient without cross-talk, sending each card's own profile", async () => {
     const el = new FakeElement();
     const client = fakeClient([
       { short_code: "VN-001", status: "READY" },
@@ -60,9 +70,10 @@ describe("IntakeModalController", () => {
     const onAssigned = vi.fn();
     const c = new IntakeModalController(el as any, client, onAssigned);
     await c.poll();
-    el.field("VN-001", "patientId", "P1");
+    fillProfile(el, "VN-001", "P1");
     el.field("VN-001", "bed", "7");
-    el.field("VN-002", "patientId", "P2");
+    fillProfile(el, "VN-002", "P2");
+    el.field("VN-002", "sex", "M");
     el.field("VN-001", "codeConfirmed", true);
     el.field("VN-002", "codeConfirmed", true);
     el.click("intake-submit", "VN-002");
@@ -70,21 +81,44 @@ describe("IntakeModalController", () => {
     await flush();
     expect(client.assign).toHaveBeenCalledWith("w_P2", "VN-002");
     expect(client.assign).toHaveBeenCalledWith("w_P1", "VN-001");
-    expect(onAssigned).toHaveBeenCalledWith(expect.anything(), { patientId: "P1", shortCode: "VN-001", bed: "7", department: null });
-    expect(onAssigned).toHaveBeenCalledWith(expect.anything(), { patientId: "P2", shortCode: "VN-002", bed: null, department: null });
+    expect(client.startPairing).toHaveBeenCalledWith("P1", {
+      first_name: "Test", last_name: "Patient", national_id: "000000018", age_years: 54, sex: "F", department: null, bed: "7"
+    });
+    expect(client.startPairing).toHaveBeenCalledWith("P2", expect.objectContaining({ sex: "M", bed: null }));
+    expect(onAssigned).toHaveBeenCalledTimes(2);
     expect(el.innerHTML).not.toContain('role="dialog"');
   });
 
-  it("refuses to submit without patient id and code confirmation (no network call)", async () => {
+  it("refuses to submit with missing profile fields or without code confirmation (no network call)", async () => {
     const el = new FakeElement();
     const client = fakeClient([{ short_code: "VN-001", status: "READY" }]);
     const c = new IntakeModalController(el as any, client, vi.fn());
     await c.poll();
     el.field("VN-001", "patientId", "P1");
+    el.field("VN-001", "codeConfirmed", true);
+    el.click("intake-submit", "VN-001");
+    await flush();
+    expect(el.innerHTML).toContain("national ID");
+    fillProfile(el, "VN-001", "P1");
+    el.field("VN-001", "codeConfirmed", false);
     el.click("intake-submit", "VN-001");
     await flush();
     expect(client.startPairing).not.toHaveBeenCalled();
     expect(el.innerHTML).toContain("vn-error");
+  });
+
+  it("shows the backend's Hebrew profile rejection (e.g. bad national-ID check digit)", async () => {
+    const el = new FakeElement();
+    const client = fakeClient([{ short_code: "VN-001", status: "READY" }]);
+    client.startPairing.mockRejectedValueOnce(new IdentityAssignmentRejected("NATIONAL_ID_INVALID", "מספר תעודת הזהות אינו תקין."));
+    const c = new IntakeModalController(el as any, client, vi.fn());
+    await c.poll();
+    fillProfile(el, "VN-001", "P1");
+    el.field("VN-001", "codeConfirmed", true);
+    el.click("intake-submit", "VN-001");
+    await flush();
+    expect(el.innerHTML).toContain("מספר תעודת הזהות אינו תקין.");
+    expect(client.assign).not.toHaveBeenCalled();
   });
 
   it("shows the backend's Hebrew rejection and cancels the opened window", async () => {
@@ -94,7 +128,7 @@ describe("IntakeModalController", () => {
     const onAssigned = vi.fn();
     const c = new IntakeModalController(el as any, client, onAssigned);
     await c.poll();
-    el.field("VN-001", "patientId", "P1");
+    fillProfile(el, "VN-001", "P1");
     el.field("VN-001", "codeConfirmed", true);
     el.click("intake-submit", "VN-001");
     await flush();

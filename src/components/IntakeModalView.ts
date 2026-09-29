@@ -1,5 +1,4 @@
 import { IdentityAssignmentRejected, type IdentityApiClient, type AssignResult } from "../api/identityClient";
-import type { TileMeta } from "../state/multiSessionStore";
 import { t, type Locale } from "../i18n/strings";
 
 /**
@@ -15,13 +14,12 @@ import { t, type Locale } from "../i18n/strings";
  * Because this skips the "exactly one new radio" auto-detect, the nurse must
  * tick an explicit "printed code matches" confirmation first.
  *
- * Fields follow the existing contracts, not the mockup's wish list:
- *  - patient_id: the only identity field `/v1/identity/pairing/start` accepts.
- *  - department/bed: no backend field; kept in tab memory for the tile label only.
- *  - age/sex: model inputs, but only accepted by the ops-only `/v1/calibration`
- *    route together with cuff BP -- shown disabled here.
- *  - first/last name, national ID: PHI the identity API explicitly excludes
- *    (identity_api.py docstring, AGENTS.md PHI rule) -- shown disabled.
+ * Fields follow identity contract 1.1.0 (owner decision 2026-09-29,
+ * AGENTS.md): patient_id, first/last name, national ID, age and sex are
+ * required; department/bed optional. The backend validates everything
+ * (incl. the national-ID check digit) and answers with a Hebrew reason code;
+ * this form only checks presence. Pairing-time age/sex are the ones
+ * calibration uses. Typed values live in this object only -- never storage.
  *
  * Opening, closing, undo and cancel are local state only (no network); only
  * submit waits on the backend.
@@ -32,10 +30,17 @@ const POLL_INTERVAL_MS = 1000;
 
 type IntakeClient = Pick<IdentityApiClient, "listLive" | "startPairing" | "assign" | "cancelPairing">;
 
+type TextField = "patientId" | "firstName" | "lastName" | "nationalId" | "age" | "department" | "bed";
+
 interface IntakeItem {
   shortCode: string;
   phase: "form" | "submitting" | "dismissed";
   patientId: string;
+  firstName: string;
+  lastName: string;
+  nationalId: string;
+  age: string;
+  sex: "" | "F" | "M";
   department: string;
   bed: string;
   codeConfirmed: boolean;
@@ -56,7 +61,7 @@ export class IntakeModalController {
   constructor(
     private readonly container: HTMLElement,
     private readonly client: IntakeClient,
-    private readonly onAssigned: (result: AssignResult, meta: TileMeta) => void,
+    private readonly onAssigned: (result: AssignResult) => void,
     initialLocale: Locale = "en"
   ) {
     this.locale = initialLocale;
@@ -88,7 +93,8 @@ export class IntakeModalController {
         const code = entry.short_code;
         if (entry.status !== "READY" || !code || this.items.has(code) || this.suppressed.has(code)) continue;
         this.items.set(code, {
-          shortCode: code, phase: "form", patientId: "", department: "", bed: "",
+          shortCode: code, phase: "form", patientId: "", firstName: "", lastName: "", nationalId: "",
+          age: "", sex: "", department: "", bed: "",
           codeConfirmed: false, error: null, undoTimer: null, dismissedAtMs: 0
         });
         changed = true;
@@ -105,12 +111,10 @@ export class IntakeModalController {
     const target = e.target as HTMLInputElement;
     const item = this.items.get(target.dataset?.code ?? "");
     if (!item) return;
-    switch (target.dataset.field) {
-      case "patientId": item.patientId = target.value; break;
-      case "department": item.department = target.value; break;
-      case "bed": item.bed = target.value; break;
-      case "codeConfirmed": item.codeConfirmed = target.checked; break;
-    }
+    const field = target.dataset.field;
+    if (field === "codeConfirmed") item.codeConfirmed = target.checked;
+    else if (field === "sex") item.sex = target.value as IntakeItem["sex"];
+    else if (field) item[field as TextField] = target.value;
   }
 
   private onClick(e: Event): void {
@@ -157,8 +161,11 @@ export class IntakeModalController {
     const item = this.items.get(code);
     if (!item || item.phase !== "form") return;
     const patientId = item.patientId.trim();
-    if (!patientId || !item.codeConfirmed) {
-      item.error = t(this.locale, !patientId ? "pairingPatientIdLabel" : "intakeConfirmCode");
+    const age = Number(item.age);
+    const complete = patientId && item.firstName.trim() && item.lastName.trim() && item.nationalId.trim()
+      && item.age.trim() && Number.isFinite(age) && item.sex;
+    if (!complete || !item.codeConfirmed) {
+      item.error = t(this.locale, !complete ? "intakeRequiredFields" : "intakeConfirmCode");
       this.render();
       return;
     }
@@ -168,17 +175,20 @@ export class IntakeModalController {
 
     let windowId: string | null = null;
     try {
-      windowId = (await this.client.startPairing(patientId)).window_id;
+      windowId = (await this.client.startPairing(patientId, {
+        first_name: item.firstName.trim(),
+        last_name: item.lastName.trim(),
+        national_id: item.nationalId.trim(),
+        age_years: age,
+        sex: item.sex as "F" | "M",
+        department: item.department.trim() || null,
+        bed: item.bed.trim() || null
+      })).window_id;
       const result = await this.client.assign(windowId, code);
       this.items.delete(code);
       this.suppressed.add(code);
       this.render();
-      this.onAssigned(result, {
-        patientId: result.assignment.patient_id,
-        shortCode: result.assignment.short_code,
-        department: item.department.trim() || null,
-        bed: item.bed.trim() || null
-      });
+      this.onAssigned(result);
     } catch (err) {
       if (windowId) void this.client.cancelPairing(windowId).catch(() => {});
       item.phase = "form";
@@ -208,14 +218,21 @@ function esc(value: string): string {
   return value.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch] as string));
 }
 
-function textField(item: IntakeItem, field: "patientId" | "department" | "bed", label: string, locale: Locale, disabled: boolean): string {
+function textField(item: IntakeItem, field: TextField, label: string, locale: Locale, disabled: boolean, type = "text"): string {
   const id = `vn-intake-${esc(item.shortCode)}-${field}`;
+  // autocomplete=off: the browser must not remember personal identifiers.
   return `<label class="vn-metric-label" for="${id}">${esc(label)}</label>
-    <input id="${id}" type="text" data-code="${esc(item.shortCode)}" data-field="${field}" value="${esc(item[field])}"${disabled ? " disabled" : ""} dir="${locale === "he" ? "rtl" : "ltr"}" />`;
+    <input id="${id}" type="${type}" autocomplete="off" data-code="${esc(item.shortCode)}" data-field="${field}" value="${esc(item[field])}"${disabled ? " disabled" : ""} dir="${locale === "he" ? "rtl" : "ltr"}" />`;
 }
 
-function blockedField(label: string, note: string): string {
-  return `<label class="vn-metric-label vn-intake-blocked">${esc(label)}<input type="text" disabled /><span>${esc(note)}</span></label>`;
+function sexField(item: IntakeItem, locale: Locale, disabled: boolean): string {
+  const id = `vn-intake-${esc(item.shortCode)}-sex`;
+  const opt = (v: IntakeItem["sex"], label: string) =>
+    `<option value="${v}"${item.sex === v ? " selected" : ""}>${esc(label)}</option>`;
+  return `<label class="vn-metric-label" for="${id}">${esc(t(locale, "sexLabel"))}</label>
+    <select id="${id}" data-code="${esc(item.shortCode)}" data-field="sex"${disabled ? " disabled" : ""}>
+      ${opt("", "—")}${opt("F", t(locale, "sexFemale"))}${opt("M", t(locale, "sexMale"))}
+    </select>`;
 }
 
 function renderCard(item: IntakeItem, locale: Locale): string {
@@ -228,19 +245,19 @@ function renderCard(item: IntakeItem, locale: Locale): string {
     </div>
     ${textField(item, "patientId", t(locale, "pairingPatientIdLabel"), locale, busy)}
     <div class="vn-intake-row">
+      <div>${textField(item, "firstName", t(locale, "firstNameLabel"), locale, busy)}</div>
+      <div>${textField(item, "lastName", t(locale, "lastNameLabel"), locale, busy)}</div>
+    </div>
+    ${textField(item, "nationalId", t(locale, "nationalIdLabel"), locale, busy)}
+    <div class="vn-intake-row">
+      <div>${textField(item, "age", t(locale, "ageLabel"), locale, busy, "number")}</div>
+      <div>${sexField(item, locale, busy)}</div>
+    </div>
+    <div class="vn-intake-note">${esc(t(locale, "intakeDemographicsNote"))}</div>
+    <div class="vn-intake-row">
       <div>${textField(item, "department", t(locale, "departmentLabel"), locale, busy)}</div>
       <div>${textField(item, "bed", t(locale, "bedLabel"), locale, busy)}</div>
     </div>
-    <div class="vn-intake-note">${esc(t(locale, "intakeLocalOnlyNote"))}</div>
-    <div class="vn-intake-row">
-      ${blockedField(t(locale, "ageLabel"), t(locale, "intakeCalibrationOnlyNote"))}
-      ${blockedField(t(locale, "sexLabel"), t(locale, "intakeCalibrationOnlyNote"))}
-    </div>
-    <div class="vn-intake-row">
-      ${blockedField(t(locale, "firstNameLabel"), t(locale, "intakePhiBlockedNote"))}
-      ${blockedField(t(locale, "lastNameLabel"), t(locale, "intakePhiBlockedNote"))}
-    </div>
-    ${blockedField(t(locale, "nationalIdLabel"), t(locale, "intakePhiBlockedNote"))}
     <label class="vn-intake-confirm">
       <input type="checkbox" data-code="${code}" data-field="codeConfirmed"${item.codeConfirmed ? " checked" : ""}${busy ? " disabled" : ""} />
       ${esc(t(locale, "intakeConfirmCode"))}: <strong>${code}</strong>

@@ -383,8 +383,6 @@ body {
 
 .vn-intake-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .vn-intake-note { font-size: 11px; color: var(--muted-2); }
-.vn-intake-blocked { display: flex; flex-direction: column; gap: 4px; }
-.vn-intake-blocked span { font-size: 10.5px; color: var(--muted-2); }
 .vn-intake-confirm { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--warn); }
 
 .vn-intake-toasts {

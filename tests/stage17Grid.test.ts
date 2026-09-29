@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { computeNews2 } from "../src/state/news2";
 import { computeAlertTier } from "../src/state/alerts";
 import { computeDeviceTelemetry } from "../src/state/deviceTelemetry";
-import { MultiSessionStore } from "../src/state/multiSessionStore";
+import { MultiSessionStore, tileMetaFromAssignment } from "../src/state/multiSessionStore";
 import { renderTileGrid, acknowledgeAlert, setDischargeStatus, resetAcknowledgementsForTest } from "../src/components/TileGridView";
 import type { JetsonResult } from "../src/state/resultTypes";
 import { validReading, abstainReading } from "./mockServer/fixtures.mjs";
@@ -130,7 +130,7 @@ describe("renderTileGrid", () => {
 
   it("shows pending and failed discharge states on the tile", () => {
     const store = new MultiSessionStore(30);
-    store.addSession("s_a", { patientId: "P1", shortCode: "VN-001", bed: "12", department: null });
+    store.addSession("s_a", { patientId: "P1", shortCode: "VN-001", name: null, bed: "12", department: null });
     setDischargeStatus("s_a", "pending");
     expect(renderTileGrid(store.getTiles(), "en", "OPEN")).toContain("Discharging…");
     setDischargeStatus("s_a", "failed");
@@ -141,12 +141,20 @@ describe("renderTileGrid", () => {
 
   it("creates a tile from an assignment event before any reading, with no vitals", () => {
     const store = new MultiSessionStore(30);
-    store.addSession("s_a", { patientId: "P1", shortCode: "VN-001", bed: "12", department: "ICU" });
+    store.addSession("s_a", { patientId: "P1", shortCode: "VN-001", name: "Test Patient", bed: "12", department: "ICU" });
     const tiles = store.getTiles();
     expect(tiles).toHaveLength(1);
     expect(tiles[0]!.display.uiState).toBe("AWAITING_FIRST_READING");
     const html = renderTileGrid(tiles, "en", "OPEN");
     expect(html).toContain("VN-001 · Department: ICU · Bed: 12");
+    expect(html).toContain("Test Patient (P1)");
     expect(html).toContain("NEWS2 unavailable");
+  });
+
+  it("derives tile meta from the assignment profile (and tolerates legacy null profile)", () => {
+    const base = { assignment_id: "a", hardware_uid: "U", short_code: "VN-001", patient_id: "P1", assigned_at_utc: 0, ended_at_utc: null, active: true };
+    expect(tileMetaFromAssignment({ ...base, profile: null })).toEqual({ patientId: "P1", shortCode: "VN-001", name: null, bed: null, department: null });
+    const profile = { first_name: "Test", last_name: "Patient", national_id: "000000018", age_years: 54, sex: "F" as const, department: "ICU", bed: "3" };
+    expect(tileMetaFromAssignment({ ...base, profile })).toEqual({ patientId: "P1", shortCode: "VN-001", name: "Test Patient", bed: "3", department: "ICU" });
   });
 });

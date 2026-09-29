@@ -2,7 +2,7 @@ import { loadRuntimeConfig, RuntimeConfigError } from "./config/runtimeConfig";
 import { JetsonApiClient } from "./api/jetsonClient";
 import { IdentityApiClient } from "./api/identityClient";
 import { ReconnectingJetsonSocket, type SocketStatus } from "./api/jetsonSocket";
-import { MultiSessionStore } from "./state/multiSessionStore";
+import { MultiSessionStore, tileMetaFromAssignment } from "./state/multiSessionStore";
 import { ShiftStore } from "./state/shiftStore";
 import { renderTileGrid, acknowledgeAlert, setDischargeStatus } from "./components/TileGridView";
 import { IntakeModalController } from "./components/IntakeModalView";
@@ -47,12 +47,7 @@ async function main(): Promise<void> {
     // panel that never touches the vitals grid's rendering path, so a
     // failure here can never affect the tiles displayed above it.
     pairingController = new AdapterPairingController(pairingEl, identityClient, locale, (result) =>
-      store.addSession(result.session.session_id, {
-        patientId: result.assignment.patient_id,
-        shortCode: result.assignment.short_code,
-        bed: null,
-        department: null
-      })
+      store.addSession(result.session.session_id, tileMetaFromAssignment(result.assignment))
     );
   }
 
@@ -63,7 +58,7 @@ async function main(): Promise<void> {
     intakeController = new IntakeModalController(
       intakeEl,
       identityClient,
-      (result, meta) => store.addSession(result.session.session_id, meta),
+      (result) => store.addSession(result.session.session_id, tileMetaFromAssignment(result.assignment)),
       locale
     );
     intakeController.start();
@@ -126,6 +121,13 @@ async function main(): Promise<void> {
     (chargeNurse, shiftKey) => shiftStore.setShift(chargeNurse, shiftKey)
   );
   shiftStore.subscribe((shift) => header.setShift(shift));
+
+  // Reload recovery: re-create tiles (with name/bed/department) for every
+  // active session. Best-effort -- the vitals stream still creates tiles.
+  void identityClient
+    .listActiveSessions()
+    .then(({ sessions }) => sessions.forEach((r) => store.addSession(r.session.session_id, tileMetaFromAssignment(r.assignment))))
+    .catch(() => {});
 
   try {
     await syncNow();
