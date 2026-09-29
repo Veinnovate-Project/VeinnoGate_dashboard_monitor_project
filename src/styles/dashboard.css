@@ -38,6 +38,7 @@ body {
 /* ---- header ---- */
 
 .vn-header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -117,7 +118,7 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  max-width: 1040px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 24px 16px;
 }
@@ -209,11 +210,126 @@ body {
 .vn-badge--warn { background: rgba(245, 197, 107, 0.16); color: var(--warn); }
 .vn-badge--danger { background: rgba(232, 115, 90, 0.16); color: var(--danger); }
 .vn-badge--muted { background: rgba(169, 189, 214, 0.12); color: var(--muted-2); }
+.vn-badge--accent { background: rgba(127, 216, 224, 0.16); color: var(--accent); }
 
 .vn-reason { font-size: 13px; color: var(--warn); margin-top: 8px; line-height: 1.4; }
 .vn-previous { font-size: 12px; color: var(--muted-2); margin-top: 10px; }
 .vn-connection { font-size: 13px; }
 .vn-error { font-size: 12px; color: var(--danger); margin-top: 8px; }
+
+/* ---- multi-patient tile grid ---- */
+
+.vn-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.vn-tile {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vn-tile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vn-tile-patient {
+  font-family: Poppins, Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.vn-tile-discharge {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted-2);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.vn-tile-discharge:hover { border-color: var(--danger); color: var(--danger); }
+
+.vn-tile .vn-panel { border: none; padding: 0; border-radius: 0; }
+
+.vn-telemetry-row {
+  display: flex;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.vn-alert-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  animation: vnAlertPulse 1.8s ease-in-out infinite;
+}
+.vn-alert-banner--urgent { background: rgba(245, 197, 107, 0.18); color: var(--warn); }
+.vn-alert-banner--critical { background: rgba(232, 115, 90, 0.2); color: var(--danger); animation-duration: 0.9s; }
+.vn-alert-banner button {
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+@keyframes vnAlertPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ---- shift handover ---- */
+
+.vn-handover-dialog {
+  position: absolute;
+  top: 64px;
+  z-index: 50;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 260px;
+}
+.vn-handover-dialog input,
+.vn-handover-dialog select {
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  padding: 0 10px;
+}
+.vn-handover-actions { display: flex; gap: 8px; }
+.vn-handover-actions button {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-raised);
+  color: var(--muted);
+  cursor: pointer;
+}
 
 /* ---- side panel (adapter pairing) ---- */
 

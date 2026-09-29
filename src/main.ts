@@ -2,8 +2,9 @@ import { loadRuntimeConfig, RuntimeConfigError } from "./config/runtimeConfig";
 import { JetsonApiClient } from "./api/jetsonClient";
 import { IdentityApiClient } from "./api/identityClient";
 import { ReconnectingJetsonSocket, type SocketStatus } from "./api/jetsonSocket";
-import { VitalsStore } from "./state/store";
-import { renderDashboard } from "./components/DashboardView";
+import { MultiSessionStore } from "./state/multiSessionStore";
+import { ShiftStore } from "./state/shiftStore";
+import { renderTileGrid, acknowledgeAlert } from "./components/TileGridView";
 import { AdapterPairingController } from "./components/AdapterPairingView";
 import { HeaderController } from "./components/HeaderView";
 import type { Locale } from "./i18n/strings";
@@ -32,19 +33,44 @@ async function main(): Promise<void> {
     return;
   }
 
-  const store = new VitalsStore(config.stale_after_seconds);
+  const store = new MultiSessionStore(config.stale_after_seconds);
+  const shiftStore = new ShiftStore();
   const apiClient = new JetsonApiClient(config);
+  const identityClient = new IdentityApiClient(config);
 
   let pairingController: AdapterPairingController | null = null;
   if (pairingEl) {
     // Software-only POC pairing flow (AGENTS.md item 6) — an independent
-    // panel that never touches VitalsStore/renderDashboard's rendering
-    // path, so a failure here can never affect the vitals display above it.
-    pairingController = new AdapterPairingController(pairingEl, new IdentityApiClient(config), locale);
+    // panel that never touches the vitals grid's rendering path, so a
+    // failure here can never affect the tiles displayed above it.
+    pairingController = new AdapterPairingController(pairingEl, identityClient, locale);
   }
 
-  store.subscribe((state) => {
-    appEl.innerHTML = renderDashboard(state, locale, socketStatus);
+  store.subscribe((tiles) => {
+    appEl.innerHTML = renderTileGrid(tiles, locale, socketStatus);
+  });
+
+  // Tile-grid actions (discharge, acknowledge) are delegated from one
+  // listener on #app rather than a per-tile controller, matching the
+  // read-mostly, backend-owned nature of the grid: every discharge still
+  // goes through the same fail-closed /v1/identity/sessions/{id}/end gate
+  // AdapterPairingView.ts uses, this is just a second entry point to it.
+  appEl.addEventListener("click", (e) => {
+    const target = (e.target as HTMLElement).closest("[data-action]") as HTMLElement | null;
+    if (!target) return;
+    const sessionId = target.dataset.sessionId;
+    if (!sessionId) return;
+    if (target.dataset.action === "discharge-tile") {
+      void identityClient
+        .endSession(sessionId)
+        .then(() => store.removeSession(sessionId))
+        .catch(() => {
+          /* fail-closed: session stays visible so the nurse can retry discharge */
+        });
+    } else if (target.dataset.action === "acknowledge") {
+      acknowledgeAlert(sessionId);
+      appEl.innerHTML = renderTileGrid(store.getTiles(), locale, socketStatus);
+    }
   });
 
   async function syncNow(): Promise<void> {
@@ -52,16 +78,18 @@ async function main(): Promise<void> {
     store.ingest(snapshot);
   }
 
-  new HeaderController(
+  const header = new HeaderController(
     headerEl,
     syncNow,
     (newLocale) => {
       locale = newLocale;
       pairingController?.setLocale(newLocale);
-      appEl.innerHTML = renderDashboard(store.getState(), locale, socketStatus);
+      appEl.innerHTML = renderTileGrid(store.getTiles(), locale, socketStatus);
     },
-    locale
+    locale,
+    (chargeNurse, shiftKey) => shiftStore.setShift(chargeNurse, shiftKey)
   );
+  shiftStore.subscribe((shift) => header.setShift(shift));
 
   try {
     await syncNow();
@@ -75,7 +103,6 @@ async function main(): Promise<void> {
     onStatusChange: (status) => {
       socketStatus = status;
       store.setTransportStatus(status);
-      appEl.innerHTML = renderDashboard(store.getState(), locale, socketStatus);
     }
   });
   socket.connect();
