@@ -1,9 +1,22 @@
 import { VitalsStore, type DisplayState } from "./store";
 import type { SocketStatus } from "../api/jetsonSocket";
 
+/**
+ * Operational (non-clinical) labels known from the assignment event itself.
+ * `bed`/`department` have no backend contract field yet, so they live only
+ * in this browser tab's memory and are lost on reload -- never persisted.
+ */
+export interface TileMeta {
+  patientId: string;
+  shortCode: string;
+  bed: string | null;
+  department: string | null;
+}
+
 export interface TileState {
   sessionId: string;
   display: DisplayState;
+  meta: TileMeta | null;
 }
 
 export type MultiSessionListener = (tiles: TileState[]) => void;
@@ -25,13 +38,17 @@ const UNROUTED_SESSION_ID = "__unrouted__";
  * is routed to a fixed `UNROUTED_SESSION_ID` bucket rather than dropped --
  * it must still surface as a visible error tile, never disappear silently.
  *
- * Sessions are discovered purely from inbound messages; nothing here needs
- * to know in advance how many patients are being monitored.
+ * Tiles appear from two sources: `addSession()` on a successful assignment
+ * (instant, before any reading arrives -- the tile shows AWAITING_FIRST_READING)
+ * and inbound results for a session this tab never saw assigned (e.g. after a
+ * reload -- the identity API has no "list active sessions" route, so hiding
+ * those would hide a monitored patient).
  */
 export class MultiSessionStore {
   private stores = new Map<string, VitalsStore>();
   private order: string[] = [];
   private listeners = new Set<MultiSessionListener>();
+  private meta = new Map<string, TileMeta>();
 
   constructor(private readonly staleAfterSeconds: number) {}
 
@@ -42,7 +59,9 @@ export class MultiSessionStore {
   }
 
   getTiles(): TileState[] {
-    return this.order.map((sessionId) => ({ sessionId, display: this.stores.get(sessionId)!.getState() }));
+    return this.order.map((sessionId) => ({ sessionId, display: this.stores.get(sessionId)!.getState(),
+      meta: this.meta.get(sessionId) ?? null
+    }));
   }
 
   private emit(): void {
@@ -59,6 +78,12 @@ export class MultiSessionStore {
       store.subscribe(() => this.emit());
     }
     return store;
+  }
+
+  addSession(sessionId: string, meta: TileMeta): void {
+    this.meta.set(sessionId, meta);
+    if (this.stores.has(sessionId)) this.emit();
+    else this.storeFor(sessionId);
   }
 
   ingest(raw: unknown, nowMs: number = Date.now()): void {
@@ -81,6 +106,7 @@ export class MultiSessionStore {
   removeSession(sessionId: string): void {
     if (!this.stores.has(sessionId)) return;
     this.stores.delete(sessionId);
+    this.meta.delete(sessionId);
     this.order = this.order.filter((id) => id !== sessionId);
     this.emit();
   }
