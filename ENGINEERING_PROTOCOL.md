@@ -43,7 +43,7 @@ The dashboard holds an array of **monitors**. One monitor = one adapter = one be
     nationalId: "311234577",      // 9 digits; the discharge confirmation key
     department: "Internal A",
     bed: "12",
-    demographics: {               // VeinNet model input; null = unknown
+    demographics: {               // mockup shape; real profile is {age_years, sex}
       age: 74, sex: "female",
       hypertension: true, chf: true, mi: null, stroke: false,
       arrhythmia: true, valveDisease: null, respiratoryFailure: false
@@ -129,6 +129,8 @@ prediction has been lost.
 | respiratory failure | HR +10, SpO₂ −6 |
 | sex = female | HR +3, SBP −3 |
 | unknown (`null`) | contributes nothing — the training-group mean, exactly as the form promises |
+
+Synthetic-only: the real VeinNet model uses no comorbidity inputs (age and sex only).
 
 **3.2 Excursion** — a packet exists only because HR left the resting band:
 tachycardic (+28…64 bpm, ~2/3 of events) or bradycardic (−18…34 bpm).
@@ -321,7 +323,7 @@ information. The same rule drives the note beside the Recorded-by field
 |---|---|---|
 | Active count | monitors that are neither disconnected nor closing | — |
 | Manual sync | re-poll VeinnoGate's adapter list; toast reports the count | wire to the real list endpoint |
-| Open monitor | manual pairing dialog (§6.5) | wire to the unpaired-adapter endpoint |
+| Open monitor | manual pairing dialog (§6.5) | mockup only — removed in the implementation (§6.5) |
 | Speaker | global alarm mute; visual alarms unaffected | keep — muting is often policy-restricted |
 | EN / עב | language + full RTL flip | — |
 | Shift chip | current shift + charge nurse; opens handover (§6.1b) | wire to the roster |
@@ -340,7 +342,8 @@ battery · Edit / Change log / Discharge.
 - The ABP block has four visual states: `idle` (—), `computing` (amber dots + scan
   bar, distinct from the instantly-updating HR/SpO₂), `ready`, `failed`.
 - "Partial demographics" appears when any model input is `null` and warns that the
-  prediction used training-group means for those features.
+  prediction used training-group means for those features (mockup only; the
+  implementation requires age and sex, so this state does not occur).
 - Tiles sort: alerting → normal → disconnected → closing.
 
 ### 6.4 Identification form (two phases)
@@ -356,11 +359,21 @@ moves the monitor out of `awaiting_identification`.
 > changing the model contract.
 Editing demographics mid-stay affects the **next** prediction only; predictions
 already displayed are not retroactively recomputed. This is stated in the form.
+> **Implementation note.** The frozen VeinNet model uses **age and sex only**
+> (demographics contract 1.0.0); the seven comorbidity fields are not model inputs
+> and are not collected by the implemented dashboard
+> (`VeinoGate_Dashboard_integration_ready/`). Its intake is a single card:
+> adapter-code confirmation, then patient ID, first and last name, national ID,
+> age and sex (all required), plus optional department and bed. The "fixed order"
+> warning above applies to the mockup only.
 
 ### 6.5 Manual open
 Backup route when automatic detection fails: lists unpaired adapters reported by
 VeinnoGate, or powers on a new one. **Replace the generated MAC list** with the real
 unpaired-adapter endpoint.
+> **Implementation note.** The manual-pairing side panel (AdapterPairingView) was
+> removed. Intake happens only through the intake card, which opens automatically
+> when an adapter is detected.
 
 ### 6.6 Change log
 Per-monitor, newest first: field, from → to, timestamp, who. Currently browser-local.
@@ -432,7 +445,8 @@ decoration — do not restyle amber/red for aesthetics.
 6. Evaluate alarms server-side so they survive a closed browser (§7).
 7. Replace sign-in with the hospital IdP; make `changedBy` a verified identity (§6.1).
 8. Honour the 10 s undo window before issuing the delete (§6.7).
-9. Point manual pairing at the real unpaired-adapter list (§6.5).
+9. ~~Point manual pairing at the real unpaired-adapter list (§6.5).~~ Obsolete:
+   manual pairing was removed; intake is card-only (§6.5).
 10. Delete the demo controls panel (§6.8).
 11. Keep the PREDICTED badge and its tooltip on every ABP display, always.
 
@@ -443,7 +457,8 @@ decoration — do not restyle amber/red for aesthetics.
 - ABP is the only predicted value; HR and SpO₂ are treated as measured.
 - No trends, history or waveform view — a tile shows the latest reading only.
 - No roles or permissions; any signed-in user can edit and discharge.
-- National ID is validated for length only, not by check digit.
+- National ID is validated for length only, not by check digit (mockup; the
+  implementation's backend validates the Israeli ID check digit).
 - The audit log records field changes, not views, acknowledgements or exports.
 - Alarm escalation has no timeout — an unacknowledged critical alert does not
   auto-escalate to a second recipient.

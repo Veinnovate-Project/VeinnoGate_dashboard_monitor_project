@@ -37,7 +37,7 @@ The dashboard presents only three clinical values:
 |---|---|---|
 | **HR** | Heart rate in beats per minute | Calculated on the wearable from the PPG/HR signal |
 | **SpO₂** | Peripheral oxygen saturation | Measured by the MAX30102 and passed through unchanged |
-| **ABP** | Predicted systolic/diastolic arterial pressure | Predicted by VeinNet on the Jetson from raw PPG/HR plus demographics |
+| **ABP** | Predicted systolic/diastolic arterial pressure | Predicted by VeinNet on the Jetson from raw PPG/HR plus age and sex |
 
 The raw PPG waveform is never displayed. It remains on the Jetson and is used only as model input.
 
@@ -93,7 +93,7 @@ The demo runs fully in the browser. It makes no network request to clinical infr
 | **Acknowledge** | Silences and clears the current UI alert while preserving the latest values |
 | Wi-Fi-style signal icon | BLE RSSI reported to the dashboard by the Jetson |
 | Battery icon | Wearable battery percentage |
-| **Partial demographics** | One or more model features are unknown and use the training-group fallback |
+| **Partial demographics** | One or more model features are unknown and use the training-group fallback (demo only — the implemented dashboard requires age and sex, so this state does not occur) |
 | Pencil | Edit patient identification or demographics |
 | Circular history arrow | Open the field-level change log |
 | × | Begin discharge and monitor closure; a 10-second undo window follows |
@@ -104,7 +104,7 @@ The demo runs fully in the browser. It makes no network request to clinical infr
 | Control | Purpose |
 |---|---|
 | **Manual sync** + refresh icon | Requests the current adapter list from VeinnoGate when automatic discovery needs a fallback |
-| **Open monitor** + plus icon | Manually pairs an available adapter and opens a new monitor |
+| **Open monitor** + plus icon | Manually pairs an available adapter and opens a new monitor (demo only — the implemented dashboard opens intake only for automatically detected adapters; there is no manual pairing) |
 | Speaker icon | Mutes or restores dashboard alert sound |
 | **EN / עב** | Switches the complete interface between English LTR and Hebrew RTL |
 | Opposing arrows + shift name | Opens shift handover and identifies the current charge nurse |
@@ -145,7 +145,7 @@ Disconnected monitors move behind active and alerting monitors so urgent informa
 
 ## Patient and model-input workflow
 
-When a new adapter is detected, the dashboard collects basic identification first:
+When a new adapter is detected, the demo collects basic identification first:
 
 - Patient name
 - National ID
@@ -153,7 +153,7 @@ When a new adapter is detected, the dashboard collects basic identification firs
 - Bed
 - Person recording the change
 
-The second step collects VeinNet inputs in a fixed order:
+The demo's second step collects these fields in a fixed order:
 
 1. Age
 2. Sex
@@ -165,7 +165,10 @@ The second step collects VeinNet inputs in a fixed order:
 8. Valve disease
 9. Respiratory failure
 
-Unknown values are valid and never block monitoring. The model uses its training-group fallback for missing features, and the tile receives a subtle **Partial demographics** label. Updating demographics affects future predictions only.
+In the demo, unknown values are valid and never block monitoring, and the tile receives a subtle **Partial demographics** label. Updating demographics affects future predictions only.
+
+> [!NOTE]
+> **Implemented dashboard (`VeinoGate_Dashboard_integration_ready/`).** A newly detected adapter opens a single intake card: the nurse confirms the code printed on the adapter, then enters patient ID, first and last name, national ID (check digit validated), age and sex (F/M) — all required — plus optional department and bed. VeinNet uses **age and sex only**; they are also the values used for calibration. Fields 3–9 above are mockup design history and are not collected.
 
 ## Data timing and safety model
 
@@ -200,6 +203,7 @@ For the fastest demo entry, select **Continue with hospital SSO**.
 |---|---|
 | `VeinnoGate Dashboard.dc.html` | Complete dashboard markup, styles, state model and synthetic demo logic |
 | `support.js` | Local runtime used by the self-contained dashboard document |
+| `VeinoGate_Dashboard_integration_ready/` | Implemented Vite/TypeScript dashboard: multi-session tile grid, adapter-first intake card (identity contract 1.1.0), tests and integration README |
 | `ENGINEERING_PROTOCOL.md` | Integration contract, state machine, timing, thresholds and implementation notes |
 | `uploads/PROJECT_CONTEXT.md` | Full product and system context in Hebrew |
 | `assets/` | Product identity assets used by the dashboard |

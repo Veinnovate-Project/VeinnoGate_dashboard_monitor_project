@@ -10,8 +10,8 @@ const root = join(here, "..");
 // runtime config are never part of the transferable source bundle -- they
 // are excluded here and recorded as such in the manifest below, not just
 // silently skipped.
-const EXCLUDE_DIRS = new Set(["node_modules", "dist", "dist-demo", ".git", "coverage", ".vite", "public"]);
-const EXCLUDE_FILES = new Set(["bundle_manifest.json", ".DS_Store"]);
+const EXCLUDE_DIRS = new Set(["node_modules", "dist", "dist-demo", ".git", "coverage", ".vite"]);
+const EXCLUDE_FILES = new Set(["bundle_manifest.json", ".DS_Store", "assets/runtime-config.json"]);
 
 function listFilesRecursive(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -54,14 +54,14 @@ const manifest = {
     note: "Copy to a deployed runtime-config.json and replace only deployment-specific non-secret values; never commit real deployment values into this bundle."
   },
   excluded_from_bundle: {
-    note: "This manifest describes every transferable source, config, schema, script, and test file. The directories below are intentionally absent from the transferable bundle and are not listed in `files`.",
+    note: "This manifest describes every transferable source, config, schema, script, and test file. The paths below are intentionally absent from the transferable bundle and are not listed in `files`.",
     directories: [
       { path: "node_modules/", reason: "Installed dependencies -- regenerate with `npm ci` against the committed package-lock.json." },
       { path: "dist/", reason: "Generated production build output -- regenerate with `npm run build`." },
       { path: "dist-demo/", reason: "Generated demo build output -- regenerate with `npm run build:demo`." },
       { path: "coverage/", reason: "Generated test-coverage output, if produced locally." },
       { path: ".vite/", reason: "Vite's local dependency-optimization cache." },
-      { path: "public/", reason: "Deployment-injected runtime-config.json lives here once created by the integration engineer (see README §2) -- it is never part of the transferable source bundle." }
+      { path: "assets/runtime-config.json", reason: "Deployment-injected runtime config (Vite publicDir is assets/), created by the integration engineer (see README §2) -- it is never part of the transferable source bundle." }
     ]
   },
   asset_provenance: [

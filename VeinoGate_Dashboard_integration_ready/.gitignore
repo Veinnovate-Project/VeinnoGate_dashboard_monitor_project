@@ -4,3 +4,5 @@ dist/
 dist-demo/
 coverage/
 *.local
+# Deploy-time config (Vite publicDir is assets/) -- never commit, see README §2
+assets/runtime-config.json

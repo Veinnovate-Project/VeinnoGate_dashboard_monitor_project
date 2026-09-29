@@ -2,7 +2,7 @@
   "bundle_name": "VeinoGate_Dashboard_integration_ready",
   "bundle_version": "0.1.0",
   "component_type": "dashboard",
-  "generated_at_utc": "2026-09-03T09:02:39.001Z",
+  "generated_at_utc": "2026-09-29T12:29:35.902Z",
   "entry_point": "index.html",
   "demo_entry_point": "demo.html",
   "dependency_lock_file": "package-lock.json",
@@ -26,7 +26,7 @@
     "note": "Copy to a deployed runtime-config.json and replace only deployment-specific non-secret values; never commit real deployment values into this bundle."
   },
   "excluded_from_bundle": {
-    "note": "This manifest describes every transferable source, config, schema, script, and test file. The directories below are intentionally absent from the transferable bundle and are not listed in `files`.",
+    "note": "This manifest describes every transferable source, config, schema, script, and test file. The paths below are intentionally absent from the transferable bundle and are not listed in `files`.",
     "directories": [
       {
         "path": "node_modules/",
@@ -49,8 +49,8 @@
         "reason": "Vite's local dependency-optimization cache."
       },
       {
-        "path": "public/",
-        "reason": "Deployment-injected runtime-config.json lives here once created by the integration engineer (see README §2) -- it is never part of the transferable source bundle."
+        "path": "assets/runtime-config.json",
+        "reason": "Deployment-injected runtime config (Vite publicDir is assets/), created by the integration engineer (see README §2) -- it is never part of the transferable source bundle."
       }
     ]
   },
@@ -64,13 +64,13 @@
   "files": [
     {
       "path": ".gitignore",
-      "size_bytes": 55,
-      "sha256": "5ef68ae73fc4260dcf72fa84bc92183d17c9f154124c8a4fbc19bf7c3a43218e"
+      "size_bytes": 163,
+      "sha256": "29cc712c0a923e5f161039a217574eeff0ac8b941ac8181015fb1f841d1fc5bb"
     },
     {
       "path": "README.md",
-      "size_bytes": 17976,
-      "sha256": "2793c3f4cb15028f3854a721fbb19be77a656a0a525e2fa574243bd29e6b2762"
+      "size_bytes": 18562,
+      "sha256": "c5b9b50249cda561f1c862f2da2a5bf1b1a4f9385aedc1b8c54bea0722df1817"
     },
     {
       "path": "assets/veinnovate-logo.jpeg",
@@ -89,8 +89,8 @@
     },
     {
       "path": "index.html",
-      "size_bytes": 404,
-      "sha256": "088c30b18b3ef592704ead4a073b3bc801089690c7e47ca91e92b430807f760b"
+      "size_bytes": 465,
+      "sha256": "49bfe17677c2ad4bb67505c63ec6dc42a9c763dddc087542e2d9f5a58fd95e42"
     },
     {
       "path": "package-lock.json",
@@ -104,8 +104,8 @@
     },
     {
       "path": "schemas/jetson-result.schema.json",
-      "size_bytes": 9429,
-      "sha256": "ee165bf6851a7950754c4fa5fdf679f26ec4b38b480eaf6999205ebb6f667b1f"
+      "size_bytes": 9460,
+      "sha256": "4b75ba1fc2f9aa78faa4dd22610c8cea9b7d13a73a36975e4c1335c0c4e530a7"
     },
     {
       "path": "schemas/jetson-ws-envelope.schema.json",
@@ -129,13 +129,13 @@
     },
     {
       "path": "scripts/generate-manifest.mjs",
-      "size_bytes": 3824,
-      "sha256": "5cc9ee1ca823c87a1a7748150cc914f257be45e4b0eaa2b83c3f593c1e706351"
+      "size_bytes": 3865,
+      "sha256": "b1416f64d447d93f8b89f3de942c65fbbff545a66a3f666a0bcea272e7c1f220"
     },
     {
       "path": "src/api/identityClient.ts",
-      "size_bytes": 5239,
-      "sha256": "cc5ba45f005b8fb9b2e74b8565e6e715709c52b8e95d2edbe6a2f2e69819cdee"
+      "size_bytes": 6165,
+      "sha256": "756e5c3bd497d9e51b1e15e47afff690b2c77046ae1d3383d43b197632f229e9"
     },
     {
       "path": "src/api/jetsonClient.ts",
@@ -148,14 +148,24 @@
       "sha256": "5f566e5c0f611f133c944d4c4537fe9f6553e45ad99a44838a7507c2f6d8e4d6"
     },
     {
-      "path": "src/components/AdapterPairingView.ts",
-      "size_bytes": 8758,
-      "sha256": "f2a2da570f87003432b897821499637ca92f794c0064cc6641eaef9162fdc70e"
+      "path": "src/components/DashboardView.ts",
+      "size_bytes": 6167,
+      "sha256": "145bc4f2ffdfa3ec00e767f4fa21537e908b35f7cdfe5244cffc4312dad26aaf"
     },
     {
-      "path": "src/components/DashboardView.ts",
-      "size_bytes": 5278,
-      "sha256": "a22ab992534009d939438bcee4a42f8f7ab8faaebe2c4a46bf36daebd8138a29"
+      "path": "src/components/HeaderView.ts",
+      "size_bytes": 6180,
+      "sha256": "b21f01c47f167c164c26c629a821bce810d63d2ae5aa8fe20002a5c8107bd747"
+    },
+    {
+      "path": "src/components/IntakeModalView.ts",
+      "size_bytes": 12776,
+      "sha256": "6ec6a2cc457d722094cdacd11eecd6afca583ac3398e47cc12d4eeb542c1d4b0"
+    },
+    {
+      "path": "src/components/TileGridView.ts",
+      "size_bytes": 7317,
+      "sha256": "2e74648009cc31cf91d485cfc6cdd3ee40c7c06af9f1eee69f50e5bcd037c07e"
     },
     {
       "path": "src/config/runtimeConfig.ts",
@@ -169,8 +179,8 @@
     },
     {
       "path": "src/i18n/strings.ts",
-      "size_bytes": 4478,
-      "sha256": "71d534c6c9018b794294870aa0ca8d89754a2f7308c2eea8fd2335f942ee47d0"
+      "size_bytes": 6594,
+      "sha256": "3397ae4cd97372b716afbee9cc2f03126933aa84b6264ea4ebf023f27f8bb133"
     },
     {
       "path": "src/main.demo.ts",
@@ -179,8 +189,13 @@
     },
     {
       "path": "src/main.ts",
-      "size_bytes": 2422,
-      "sha256": "314c92031e6a4887c06834dba4d4bafa6b2bca74d0ca2312768d0b6e42c17b96"
+      "size_bytes": 5061,
+      "sha256": "b882badfdf3df390aff829ba235687e87caef21ccc74d50be1ce934de41aa049"
+    },
+    {
+      "path": "src/state/alerts.ts",
+      "size_bytes": 2635,
+      "sha256": "565e7d423b9886b31c14a9a2b2f3962b311aab31d4e006c6361ea53877af38b1"
     },
     {
       "path": "src/state/calibrationDisplay.ts",
@@ -193,14 +208,34 @@
       "sha256": "30925aa3b0dfc5c077284f5d939e3f496a87a40c70bd84e11f58a5575b711d12"
     },
     {
+      "path": "src/state/deviceTelemetry.ts",
+      "size_bytes": 1395,
+      "sha256": "59baa5394a628c8d0879029edde4101d7d151a893077c83e933933eb0313a37f"
+    },
+    {
       "path": "src/state/messageGuard.ts",
       "size_bytes": 2592,
       "sha256": "fa8fd4d427a41d27635cbde7a2c20e38d8094beb98992ac48070dc13977c05b7"
     },
     {
+      "path": "src/state/multiSessionStore.ts",
+      "size_bytes": 4535,
+      "sha256": "c839de61d080d47b2fc241754161246a5ca382b61114496b898931dc3e7e9d7b"
+    },
+    {
+      "path": "src/state/news2.ts",
+      "size_bytes": 2234,
+      "sha256": "79d1a7cf996e1cff6addfd466d8ef0885e094df2e9ab5988b1a14db85e1b1b2e"
+    },
+    {
       "path": "src/state/resultTypes.ts",
-      "size_bytes": 2735,
-      "sha256": "139a6ed25eb3120d501962d282348034b1d044723e632ebc7e1685f2e3e4c08b"
+      "size_bytes": 2755,
+      "sha256": "e2531c3a67166ad0b770122ffd82c4f371d8b94f3273b053b28e1e33dacd8935"
+    },
+    {
+      "path": "src/state/shiftStore.ts",
+      "size_bytes": 1822,
+      "sha256": "333703f65951d7caa5a38053dd4d8a88edf585942b53a0cd0a43d8d4d8322a6b"
     },
     {
       "path": "src/state/store.ts",
@@ -214,13 +249,8 @@
     },
     {
       "path": "src/styles/dashboard.css",
-      "size_bytes": 2063,
-      "sha256": "439a2c91e5b1dd23fc39c3b65de4034624634b9a3ed60da2263d56bef71cefb8"
-    },
-    {
-      "path": "tests/adapterPairingView.test.ts",
-      "size_bytes": 7589,
-      "sha256": "9c6c95de9d05c7d544ec2654e9385e425669f673f48ea2a22055c81158ab0482"
+      "size_bytes": 10694,
+      "sha256": "12e797677a6fd90a6df934f8cee748dae359644b24927db163c9e09acab82cb9"
     },
     {
       "path": "tests/calibrationBoundaries.test.ts",
@@ -234,8 +264,13 @@
     },
     {
       "path": "tests/identityClient.test.ts",
-      "size_bytes": 4824,
-      "sha256": "51e785192951358b54fcb8deed4d684156fe029b34b62ef6f184b59c34d06bb2"
+      "size_bytes": 5016,
+      "sha256": "4413f016f90e51efd5cf886374313ee2846700b17ec408f2dc53948b8c6e6b10"
+    },
+    {
+      "path": "tests/intakeModal.test.ts",
+      "size_bytes": 7665,
+      "sha256": "302e0a3b451f2e6015ffb5e57ecf98f4e22ee9f807eb88f0efd26c999c8a6ebd"
     },
     {
       "path": "tests/messageGuard.test.ts",
@@ -278,6 +313,11 @@
       "sha256": "68941ff027298fcf8081a31bd754234c06bfa6df55eabd6e808bd00b0d2a5492"
     },
     {
+      "path": "tests/stage17Grid.test.ts",
+      "size_bytes": 7847,
+      "sha256": "ea38fcc450478c4643dd9f4bad8c6418f33ce38e9dce66d32d955ca3e3d9585c"
+    },
+    {
       "path": "tests/store.test.ts",
       "size_bytes": 2620,
       "sha256": "11a29b4d49e91b35a6d1c98fe025a80e71e4ee6b685c103951ccf11171822e9e"
@@ -294,8 +334,8 @@
     },
     {
       "path": "vite.config.ts",
-      "size_bytes": 692,
-      "sha256": "848489599df9b9e14a6f03b06d801c0cc2ac2e9f3e78d82556a44d01d6b54166"
+      "size_bytes": 735,
+      "sha256": "4c6277c591bc6af30679d36221a2fc4a1eeeb068937064675425c3f6875634e9"
     }
   ]
 }

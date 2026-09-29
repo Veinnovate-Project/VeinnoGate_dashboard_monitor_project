@@ -45,8 +45,7 @@ deliberately:
 
 1. Copy the template:
    ```bash
-   mkdir -p public
-   cp config/runtime-config.example.json public/runtime-config.json
+   cp config/runtime-config.example.json assets/runtime-config.json
    ```
 2. Edit only the deployment-specific, non-secret fields:
 
@@ -64,16 +63,16 @@ Never commit a `runtime-config.json` containing a real deployment's host,
 port, or any identifier into this bundle — it is `.gitignore`d for exactly
 that reason. For local development or manual testing against the bundled
 mock server (§7), copy `tests/mockServer/runtime-config.test.json` to
-`public/runtime-config.json` instead — that file is committed under
+`assets/runtime-config.json` instead — that file is committed under
 `tests/` precisely because it is understood to be test-only and is never
 picked up by the production build path unless someone explicitly places a
-copy under `public/`.
+copy under `assets/` (Vite's `publicDir`).
 
 **Startup fails visibly** — a fatal error panel, no fallback — if
 `runtime-config.json` is absent, fails schema validation, names an
 unsupported `config_schema_version`, or uses an insecure URL scheme outside
 test/localhost. See `src/config/runtimeConfig.ts`. This is deliberate: a
-`npm run build` with no `public/runtime-config.json` in place produces a
+`npm run build` with no `assets/runtime-config.json` in place produces a
 `dist/` that fails visibly at runtime rather than silently shipping a stale
 or test configuration.
 
@@ -226,7 +225,7 @@ npm run typecheck
 npm test
 ```
 
-45 tests across 8 files, all passing at the time of writing:
+76 tests across 11 files, all passing at the time of writing:
 
 - `tests/messages.test.ts` — valid and malformed/invalid message acceptance and rejection.
 - `tests/messageGuard.test.ts` — duplicate rejection and out-of-order/delayed-reading rejection.
@@ -236,6 +235,9 @@ npm test
 - `tests/spo2.test.ts` — SpO₂ unavailable-by-default and the VALID+algorithm-provenance pairing rule.
 - `tests/runtimeConfig.test.ts` — missing/malformed config, unsupported config schema version, insecure-URL rejection, and the test-mode/localhost exception.
 - `tests/demoIsolation.test.ts` — static checks that production never imports demo code and that the demo banner is unconditional markup.
+- `tests/identityClient.test.ts` — identity API client (contract 1.1.0): base-URL derivation, live list, pairing start with profile, assignment success/409 rejection, session end.
+- `tests/intakeModal.test.ts` — adapter-first intake card: one card per READY adapter, required fields and code confirmation, backend rejection (e.g. national-ID check digit), 10 s undo.
+- `tests/stage17Grid.test.ts` — multi-session tile grid: partial NEWS2, alert tiers and acknowledgement, per-session demux, discharge states, tiles from assignment events.
 
 `tests/mockServer/` contains a lightweight, test/demo-only Jetson mock
 (`server.mjs` + `fixtures.mjs` + `runtime-config.test.json`) implementing the
@@ -243,8 +245,7 @@ documented schema, used for manual/integration checks:
 
 ```bash
 npm run mock-server &
-mkdir -p public
-cp tests/mockServer/runtime-config.test.json public/runtime-config.json
+cp tests/mockServer/runtime-config.test.json assets/runtime-config.json
 npm run dev
 ```
 
@@ -282,9 +283,10 @@ manual/E2E testing — and must never be copied into a production `dist/`.
 - No authentication/authorization layer is implemented here; the Jetson-facing
   gateway is expected to provide TLS, auth and replay protection per the
   architecture boundary.
-- Alarm rendering, patient/adapter binding UI, and multi-session history are
-  out of scope for this bundle — it renders exactly one live session's
-  vitals/calibration/connection state.
+- Multi-session history is out of scope for this bundle. It renders a
+  multi-session tile grid (latest reading per session) with partial-NEWS2
+  alert tiers, and an adapter-first intake card (identity contract 1.1.0)
+  as the only patient/adapter binding path.
 
 ## 10. Condensed project history
 
@@ -304,7 +306,7 @@ separately-built demo entry point.
 ## Portability test
 
 This bundle ships with no `node_modules/`, no `dist/`/`dist-demo/`, and no
-`public/runtime-config.json` — verify that stays true, and that a fresh copy
+`assets/runtime-config.json` — verify that stays true, and that a fresh copy
 builds and runs entirely on its own, with a colon-free path (some shells
 mis-split `PATH` around a literal `:` in a directory name, which is a shell
 issue, not a bundle issue):
@@ -313,7 +315,7 @@ issue, not a bundle issue):
 # 1-2. Copy only this directory outside the source repository, confirm it's clean
 cp -R VeinoGate_Dashboard_integration_ready /tmp/veinogate-portability-check
 cd /tmp/veinogate-portability-check
-ls node_modules dist dist-demo public/runtime-config.json 2>&1 | grep -q "No such file" && echo "clean: none present"
+ls node_modules dist dist-demo assets/runtime-config.json 2>&1 | grep -q "No such file" && echo "clean: none present"
 
 # 3-4. Install from the lockfile only, type-check, run all tests
 npm ci
@@ -334,7 +336,7 @@ grep -rIl "localhost:8787\|mode.:.test" dist/ && echo "FAIL: test config leaked 
 
 # 8. Mock-server E2E using the explicit test fixture
 npm run mock-server &
-mkdir -p public && cp tests/mockServer/runtime-config.test.json public/runtime-config.json
+cp tests/mockServer/runtime-config.test.json assets/runtime-config.json
 npm run dev   # visit the dev URL and confirm live VALID/ABSTAIN/RECALIBRATE cycling, then stop the mock server
 
 # 9. Remove the temporary copy
