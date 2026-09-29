@@ -12,7 +12,22 @@ import type { RuntimeConfig } from "../config/runtimeConfig";
  *
  * This client is never imported by src/demo/** — the pairing flow is
  * production-only, real-Jetson-only, exactly like the rest of src/main.ts.
+ *
+ * Identity contract 1.1.0 (owner decision 2026-09-29, AGENTS.md): pairing
+ * carries the patient profile below. It is PHI: keep it in memory only --
+ * never localStorage/sessionStorage, never console output.
  */
+
+/** Validated server-side (identity_api.py); each failure is a 409 reason code. */
+export interface PatientProfile {
+  first_name: string;
+  last_name: string;
+  national_id: string;
+  age_years: number;
+  sex: "F" | "M";
+  department: string | null;
+  bed: string | null;
+}
 
 export interface AdapterInventoryEntry {
   hardware_uid: string;
@@ -61,6 +76,8 @@ export interface AssignmentRecord {
   assigned_at_utc: number;
   ended_at_utc: number | null;
   active: boolean;
+  /** null for pre-1.1.0 bindings (simulator/legacy), which carry no profile. */
+  profile: PatientProfile | null;
 }
 
 export interface MeasurementSessionRecord {
@@ -142,11 +159,17 @@ export class IdentityApiClient {
     return this.request("/live");
   }
 
-  startPairing(patientId: string): Promise<PairingWindow> {
+  startPairing(patientId: string, profile?: PatientProfile): Promise<PairingWindow> {
+    // Without a profile the backend rejects with PROFILE_FIELD_MISSING (fail-closed).
     return this.request("/pairing/start", {
       method: "POST",
-      body: JSON.stringify({ patient_id: patientId })
+      body: JSON.stringify({ patient_id: patientId, ...profile })
     });
+  }
+
+  /** Active sessions with their profiles -- rebuilds the tiles after a reload. */
+  listActiveSessions(): Promise<{ sessions: AssignResult[] }> {
+    return this.request("/sessions/active");
   }
 
   pairingStatus(windowId: string): Promise<PairingStatus> {

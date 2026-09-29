@@ -37,7 +37,7 @@ describe("IdentityApiClient", () => {
     expect(result.live[0]?.short_code).toBe("VN-001");
   });
 
-  it("startPairing posts patient_id and returns the window", async () => {
+  it("startPairing posts patient_id with the profile and returns the window", async () => {
     let body: unknown = null;
     mockFetch((_url, init) => {
       body = init?.body ? JSON.parse(init.body as string) : null;
@@ -48,8 +48,9 @@ describe("IdentityApiClient", () => {
       };
     });
     const client = new IdentityApiClient(config);
-    const window_ = await client.startPairing("P1");
-    expect(body).toEqual({ patient_id: "P1" });
+    const profile = { first_name: "Test", last_name: "Patient", national_id: "000000018", age_years: 54, sex: "F" as const, department: null, bed: "7" };
+    const window_ = await client.startPairing("P1", profile);
+    expect(body).toEqual({ patient_id: "P1", ...profile });
     expect(window_.window_id).toBe("w1");
   });
 

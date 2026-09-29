@@ -92,7 +92,9 @@ export class AdapterPairingController {
       this.pollHandle = setInterval(() => void this.pollStatus(), POLL_INTERVAL_MS);
       await this.pollStatus();
     } catch (err) {
-      this.errorText = t(this.locale, "pairingGenericError");
+      // Since identity contract 1.1.0 this panel (patient_id only) is rejected
+      // with PROFILE_FIELD_MISSING -- show the backend's Hebrew reason.
+      this.errorText = err instanceof IdentityAssignmentRejected ? err.messageHe : t(this.locale, "pairingGenericError");
       this.render();
     }
   }
