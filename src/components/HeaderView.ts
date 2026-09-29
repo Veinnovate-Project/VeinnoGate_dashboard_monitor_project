@@ -5,7 +5,7 @@ import type { ShiftState, ShiftKey } from "../state/shiftStore";
  * Header bar: logo/title, a real manual-sync trigger (re-runs the same
  * snapshot fetch the app already does on load), a real EN/HE locale
  * toggle, and a shift/charge-nurse chip that opens the handover dialog.
- * Plain DOM + event delegation, matching AdapterPairingView.ts's style so
+ * Plain DOM + event delegation, matching IntakeModalView.ts's style so
  * production has one rendering convention, not two.
  *
  * The handover dialog writes only to the local ShiftStore (see

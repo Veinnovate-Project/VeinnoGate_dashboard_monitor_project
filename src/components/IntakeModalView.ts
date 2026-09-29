@@ -10,7 +10,7 @@ import { t, type Locale } from "../i18n/strings";
  *
  * Submitting opens a backend pairing window for the entered patient_id and
  * immediately assigns this card's code through the same fail-closed
- * `/v1/identity/assign` gate as AdapterPairingView.ts (manual-code path).
+ * `/v1/identity/assign` gate (manual-code path).
  * Because this skips the "exactly one new radio" auto-detect, the nurse must
  * tick an explicit "printed code matches" confirmation first.
  *

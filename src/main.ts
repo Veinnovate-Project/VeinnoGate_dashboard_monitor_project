@@ -7,7 +7,6 @@ import { ShiftStore } from "./state/shiftStore";
 import { renderTileGrid, acknowledgeAlert, setDischargeStatus } from "./components/TileGridView";
 import { IntakeModalController } from "./components/IntakeModalView";
 import type { AlertTier } from "./state/alerts";
-import { AdapterPairingController } from "./components/AdapterPairingView";
 import { HeaderController } from "./components/HeaderView";
 import type { Locale } from "./i18n/strings";
 
@@ -17,7 +16,6 @@ import type { Locale } from "./i18n/strings";
 
 const headerEl = document.getElementById("header")!;
 const appEl = document.getElementById("app")!;
-const pairingEl = document.getElementById("adapter-pairing");
 const intakeEl = document.getElementById("intake-modals");
 let socketStatus: SocketStatus = "CONNECTING";
 let locale: Locale = "en";
@@ -40,16 +38,6 @@ async function main(): Promise<void> {
   const shiftStore = new ShiftStore();
   const apiClient = new JetsonApiClient(config);
   const identityClient = new IdentityApiClient(config);
-
-  let pairingController: AdapterPairingController | null = null;
-  if (pairingEl) {
-    // Software-only POC pairing flow (AGENTS.md item 6) — an independent
-    // panel that never touches the vitals grid's rendering path, so a
-    // failure here can never affect the tiles displayed above it.
-    pairingController = new AdapterPairingController(pairingEl, identityClient, locale, (result) =>
-      store.addSession(result.session.session_id, tileMetaFromAssignment(result.assignment))
-    );
-  }
 
   // Adapter-first intake: one modal card per READY adapter; a successful
   // assignment adds its tile immediately, before the first reading arrives.
@@ -75,8 +63,7 @@ async function main(): Promise<void> {
   // Tile-grid actions (discharge, acknowledge) are delegated from one
   // listener on #app rather than a per-tile controller, matching the
   // read-mostly, backend-owned nature of the grid: every discharge still
-  // goes through the same fail-closed /v1/identity/sessions/{id}/end gate
-  // AdapterPairingView.ts uses, this is just a second entry point to it.
+  // goes through the fail-closed /v1/identity/sessions/{id}/end gate.
   appEl.addEventListener("click", (e) => {
     const target = (e.target as HTMLElement).closest("[data-action]") as HTMLElement | null;
     if (!target) return;
@@ -113,7 +100,6 @@ async function main(): Promise<void> {
     syncNow,
     (newLocale) => {
       locale = newLocale;
-      pairingController?.setLocale(newLocale);
       intakeController?.setLocale(newLocale);
       rerender();
     },

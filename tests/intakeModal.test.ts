@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { IntakeModalController, UNDO_WINDOW_MS } from "../src/components/IntakeModalView";
 import { IdentityAssignmentRejected } from "../src/api/identityClient";
 
-// DOM-less, like adapterPairingView.test.ts: the controller only needs
+// DOM-less: the controller only needs
 // addEventListener + innerHTML from its container.
 class FakeElement {
   innerHTML = "";
