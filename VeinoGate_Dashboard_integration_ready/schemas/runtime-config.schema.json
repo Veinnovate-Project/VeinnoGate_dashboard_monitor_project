@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "veinogate://schemas/runtime-config.schema.json",
+  "title": "VeinoGate Dashboard Runtime Configuration",
+  "description": "Deploy-time, non-secret configuration fetched by the dashboard at startup. Must contain no credentials, tokens, or patient data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "config_schema_version",
+    "mode",
+    "jetson_rest_base_url",
+    "jetson_websocket_url",
+    "expected_result_schema_version",
+    "connection_timeout_ms",
+    "stale_after_seconds"
+  ],
+  "properties": {
+    "config_schema_version": { "type": "string", "enum": ["1.0.0"] },
+    "mode": {
+      "type": "string",
+      "enum": ["production", "test"],
+      "description": "Declares the deployment's own intent. It never causes the app to switch modes at runtime -- that is fixed at build time by which entry point (index.html vs demo.html) was built. This field only relaxes the http(s)/ws(s) scheme check for local test/mock targets."
+    },
+    "jetson_rest_base_url": { "type": "string", "format": "uri" },
+    "jetson_websocket_url": { "type": "string", "format": "uri" },
+    "expected_result_schema_version": { "type": "string" },
+    "connection_timeout_ms": { "type": "integer", "exclusiveMinimum": 0 },
+    "stale_after_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Client-side display staleness budget. Independent of clinical calibration thresholds, which always come from the Jetson's calibration object on each message."
+    }
+  }
+}
