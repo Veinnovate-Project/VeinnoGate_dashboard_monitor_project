@@ -1,0 +1,33 @@
+{
+  "name": "veinogate-dashboard-integration-ready",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VeinoGate dashboard — production/demo UI that communicates only with the Jetson edge API/WebSocket.",
+  "type": "module",
+  "scripts": {
+    "dev": "BUNDLE_TARGET=production vite",
+    "dev:demo": "BUNDLE_TARGET=demo vite",
+    "build": "BUNDLE_TARGET=production vite build",
+    "build:demo": "BUNDLE_TARGET=demo vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "mock-server": "node tests/mockServer/server.mjs",
+    "check:schema-drift": "node scripts/check-schema-drift.mjs",
+    "check:schema-drift:strict": "node scripts/check-schema-drift.mjs --strict",
+    "check:no-random-in-prod": "node scripts/check-no-random-in-prod.mjs",
+    "generate:manifest": "node scripts/generate-manifest.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "typescript": "5.6.3",
+    "vite": "5.4.21",
+    "vitest": "2.1.9",
+    "ws": "8.21.3"
+  }
+}

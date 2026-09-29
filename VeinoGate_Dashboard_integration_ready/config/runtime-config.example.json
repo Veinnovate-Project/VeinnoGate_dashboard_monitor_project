@@ -1,0 +1,9 @@
+{
+  "config_schema_version": "1.0.0",
+  "mode": "production",
+  "jetson_rest_base_url": "https://jetson.example.invalid/api/v1",
+  "jetson_websocket_url": "wss://jetson.example.invalid/ws/v1",
+  "expected_result_schema_version": "1.0.0",
+  "connection_timeout_ms": 10000,
+  "stale_after_seconds": 60
+}
