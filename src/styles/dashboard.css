@@ -112,6 +112,17 @@ body {
   color: var(--accent);
 }
 
+.vn-header-btn, .vn-locale-toggle { flex: none; white-space: nowrap; }
+
+/* Narrow screens: never clip the locale toggle -- drop the divider and the
+   Sync label (icon + title tooltip remain) and let the header wrap. */
+@media (max-width: 480px) {
+  .vn-header { flex-wrap: wrap; height: auto; min-height: 64px; padding: 10px 12px; gap: 8px; }
+  .vn-header-divider { display: none; }
+  .vn-header-btn[data-action="sync"] span { display: none; }
+  .vn-header-btn { padding: 0 10px; }
+}
+
 /* ---- layout ---- */
 
 #layout {
