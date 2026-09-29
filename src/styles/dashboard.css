@@ -231,6 +231,7 @@ body {
 
 .vn-tile-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 }
@@ -239,7 +240,7 @@ body {
   font-family: Poppins, Inter, sans-serif;
   font-size: 13px;
   font-weight: 600;
-  flex: 1;
+  flex: 1 1 140px;
 }
 
 .vn-tile-discharge {
@@ -364,7 +365,9 @@ body {
   cursor: pointer;
 }
 
-.vn-intake-card input[type="text"] {
+.vn-intake-card input[type="text"],
+.vn-intake-card input[type="number"],
+.vn-intake-card select {
   height: 38px;
   width: 100%;
   border-radius: 8px;
@@ -373,7 +376,7 @@ body {
   color: var(--text);
   padding: 0 10px;
 }
-.vn-intake-card input:disabled { opacity: 0.45; }
+.vn-intake-card input:disabled, .vn-intake-card select:disabled { opacity: 0.45; }
 
 .vn-intake-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .vn-intake-note { font-size: 11px; color: var(--muted-2); }
