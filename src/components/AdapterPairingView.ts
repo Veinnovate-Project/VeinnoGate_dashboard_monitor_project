@@ -37,7 +37,8 @@ export class AdapterPairingController {
   constructor(
     private readonly container: HTMLElement,
     private readonly client: IdentityApiClient,
-    initialLocale: Locale = "he"
+    initialLocale: Locale = "he",
+    private readonly onAssigned?: (result: AssignResult) => void
   ) {
     this.locale = initialLocale;
     this.container.addEventListener("click", (e) => this.onClick(e));
@@ -141,6 +142,7 @@ export class AdapterPairingController {
       const result = await this.client.assign(windowId, shortCode);
       this.phase = { kind: "assigned", result };
       this.render();
+      this.onAssigned?.(result);
     } catch (err) {
       this.errorText =
         err instanceof IdentityAssignmentRejected ? err.messageHe : t(this.locale, "pairingGenericError");

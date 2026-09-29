@@ -3,7 +3,7 @@ import { computeNews2 } from "../src/state/news2";
 import { computeAlertTier } from "../src/state/alerts";
 import { computeDeviceTelemetry } from "../src/state/deviceTelemetry";
 import { MultiSessionStore } from "../src/state/multiSessionStore";
-import { renderTileGrid, acknowledgeAlert, resetAcknowledgementsForTest } from "../src/components/TileGridView";
+import { renderTileGrid, acknowledgeAlert, setDischargeStatus, resetAcknowledgementsForTest } from "../src/components/TileGridView";
 import type { JetsonResult } from "../src/state/resultTypes";
 import { validReading, abstainReading } from "./mockServer/fixtures.mjs";
 
@@ -113,7 +113,40 @@ describe("renderTileGrid", () => {
     store.ingest(withVitals("rd_1", 74, 85, 122));
     const sessionId = store.getTiles()[0]!.sessionId;
     expect(renderTileGrid(store.getTiles(), "en", "OPEN")).toContain("vn-alert-banner--critical");
-    acknowledgeAlert(sessionId);
+    acknowledgeAlert(sessionId, "critical");
     expect(renderTileGrid(store.getTiles(), "en", "OPEN")).not.toContain("vn-alert-banner");
+  });
+
+  it("re-shows the banner when an acknowledged alert escalates", () => {
+    const store = new MultiSessionStore(30);
+    store.ingest(withVitals("rd_1", 74, 91, 122));
+    const sessionId = store.getTiles()[0]!.sessionId;
+    expect(renderTileGrid(store.getTiles(), "en", "OPEN")).toContain("vn-alert-banner--urgent");
+    acknowledgeAlert(sessionId, "urgent");
+    expect(renderTileGrid(store.getTiles(), "en", "OPEN")).not.toContain("vn-alert-banner");
+    store.ingest(withVitals("rd_2", 74, 85, 122));
+    expect(renderTileGrid(store.getTiles(), "en", "OPEN")).toContain("vn-alert-banner--critical");
+  });
+
+  it("shows pending and failed discharge states on the tile", () => {
+    const store = new MultiSessionStore(30);
+    store.addSession("s_a", { patientId: "P1", shortCode: "VN-001", bed: "12", department: null });
+    setDischargeStatus("s_a", "pending");
+    expect(renderTileGrid(store.getTiles(), "en", "OPEN")).toContain("Discharging…");
+    setDischargeStatus("s_a", "failed");
+    const html = renderTileGrid(store.getTiles(), "en", "OPEN");
+    expect(html).toContain("Discharge failed");
+    expect(html).toContain('role="alert"');
+  });
+
+  it("creates a tile from an assignment event before any reading, with no vitals", () => {
+    const store = new MultiSessionStore(30);
+    store.addSession("s_a", { patientId: "P1", shortCode: "VN-001", bed: "12", department: "ICU" });
+    const tiles = store.getTiles();
+    expect(tiles).toHaveLength(1);
+    expect(tiles[0]!.display.uiState).toBe("AWAITING_FIRST_READING");
+    const html = renderTileGrid(tiles, "en", "OPEN");
+    expect(html).toContain("VN-001 · Department: ICU · Bed: 12");
+    expect(html).toContain("NEWS2 unavailable");
   });
 });

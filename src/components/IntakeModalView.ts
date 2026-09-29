@@ -41,6 +41,7 @@ interface IntakeItem {
   codeConfirmed: boolean;
   error: string | null;
   undoTimer: ReturnType<typeof setTimeout> | null;
+  dismissedAtMs: number;
 }
 
 export class IntakeModalController {
@@ -88,7 +89,7 @@ export class IntakeModalController {
         if (entry.status !== "READY" || !code || this.items.has(code) || this.suppressed.has(code)) continue;
         this.items.set(code, {
           shortCode: code, phase: "form", patientId: "", department: "", bed: "",
-          codeConfirmed: false, error: null, undoTimer: null
+          codeConfirmed: false, error: null, undoTimer: null, dismissedAtMs: 0
         });
         changed = true;
       }
@@ -137,6 +138,7 @@ export class IntakeModalController {
     const item = this.items.get(code);
     if (!item || item.phase !== "form") return;
     item.phase = "dismissed";
+    item.dismissedAtMs = Date.now();
     // No backend window exists before submit, so abandoning is purely local.
     item.undoTimer = setTimeout(() => this.drop(code), UNDO_WINDOW_MS);
     this.render();
@@ -192,7 +194,7 @@ export class IntakeModalController {
     const activeId = active && this.container.contains?.(active) ? active.id : null;
     const caret = activeId && active?.type === "text" ? active.selectionStart : null;
 
-    this.container.innerHTML = renderIntake([...this.items.values()], this.locale);
+    this.container.innerHTML = renderIntake([...this.items.values()], this.locale, Date.now());
 
     if (activeId) {
       const el = document.getElementById(activeId) as HTMLInputElement | null;
@@ -251,7 +253,7 @@ function renderCard(item: IntakeItem, locale: Locale): string {
   </div>`;
 }
 
-export function renderIntake(items: IntakeItem[], locale: Locale): string {
+export function renderIntake(items: IntakeItem[], locale: Locale, nowMs: number): string {
   const dir = locale === "he" ? "rtl" : "ltr";
   const open = items.filter((i) => i.phase !== "dismissed");
   const dismissed = items.filter((i) => i.phase === "dismissed");
@@ -264,7 +266,7 @@ export function renderIntake(items: IntakeItem[], locale: Locale): string {
           (i) => `<div class="vn-intake-toast" role="status">
             <span>${esc(t(locale, "intakeUndoPrompt"))} ${esc(i.shortCode)}</span>
             <button data-action="intake-undo" data-code="${esc(i.shortCode)}">${esc(t(locale, "intakeUndo"))}</button>
-            <div class="vn-intake-toast-bar" style="animation-duration:${UNDO_WINDOW_MS}ms"></div>
+            <div class="vn-intake-toast-bar" style="animation-duration:${UNDO_WINDOW_MS}ms;animation-delay:-${Math.max(0, nowMs - i.dismissedAtMs)}ms"></div>
           </div>`
         )
         .join("")}</div>`

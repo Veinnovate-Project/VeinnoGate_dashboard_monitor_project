@@ -4,7 +4,9 @@ import { IdentityApiClient } from "./api/identityClient";
 import { ReconnectingJetsonSocket, type SocketStatus } from "./api/jetsonSocket";
 import { MultiSessionStore } from "./state/multiSessionStore";
 import { ShiftStore } from "./state/shiftStore";
-import { renderTileGrid, acknowledgeAlert } from "./components/TileGridView";
+import { renderTileGrid, acknowledgeAlert, setDischargeStatus } from "./components/TileGridView";
+import { IntakeModalController } from "./components/IntakeModalView";
+import type { AlertTier } from "./state/alerts";
 import { AdapterPairingController } from "./components/AdapterPairingView";
 import { HeaderController } from "./components/HeaderView";
 import type { Locale } from "./i18n/strings";
@@ -16,6 +18,7 @@ import type { Locale } from "./i18n/strings";
 const headerEl = document.getElementById("header")!;
 const appEl = document.getElementById("app")!;
 const pairingEl = document.getElementById("adapter-pairing");
+const intakeEl = document.getElementById("intake-modals");
 let socketStatus: SocketStatus = "CONNECTING";
 let locale: Locale = "en";
 
@@ -43,8 +46,32 @@ async function main(): Promise<void> {
     // Software-only POC pairing flow (AGENTS.md item 6) — an independent
     // panel that never touches the vitals grid's rendering path, so a
     // failure here can never affect the tiles displayed above it.
-    pairingController = new AdapterPairingController(pairingEl, identityClient, locale);
+    pairingController = new AdapterPairingController(pairingEl, identityClient, locale, (result) =>
+      store.addSession(result.session.session_id, {
+        patientId: result.assignment.patient_id,
+        shortCode: result.assignment.short_code,
+        bed: null,
+        department: null
+      })
+    );
   }
+
+  // Adapter-first intake: one modal card per READY adapter; a successful
+  // assignment adds its tile immediately, before the first reading arrives.
+  let intakeController: IntakeModalController | null = null;
+  if (intakeEl) {
+    intakeController = new IntakeModalController(
+      intakeEl,
+      identityClient,
+      (result, meta) => store.addSession(result.session.session_id, meta),
+      locale
+    );
+    intakeController.start();
+  }
+
+  const rerender = () => {
+    appEl.innerHTML = renderTileGrid(store.getTiles(), locale, socketStatus);
+  };
 
   store.subscribe((tiles) => {
     appEl.innerHTML = renderTileGrid(tiles, locale, socketStatus);
@@ -61,15 +88,23 @@ async function main(): Promise<void> {
     const sessionId = target.dataset.sessionId;
     if (!sessionId) return;
     if (target.dataset.action === "discharge-tile") {
+      // Instant "Discharging…" feedback; the tile itself is only removed once
+      // the backend confirms, since end-session can be rejected fail-closed.
+      setDischargeStatus(sessionId, "pending");
+      rerender();
       void identityClient
         .endSession(sessionId)
-        .then(() => store.removeSession(sessionId))
+        .then(() => {
+          setDischargeStatus(sessionId, null);
+          store.removeSession(sessionId);
+        })
         .catch(() => {
-          /* fail-closed: session stays visible so the nurse can retry discharge */
+          setDischargeStatus(sessionId, "failed");
+          rerender();
         });
     } else if (target.dataset.action === "acknowledge") {
-      acknowledgeAlert(sessionId);
-      appEl.innerHTML = renderTileGrid(store.getTiles(), locale, socketStatus);
+      acknowledgeAlert(sessionId, target.dataset.tier as AlertTier);
+      rerender();
     }
   });
 
@@ -84,7 +119,8 @@ async function main(): Promise<void> {
     (newLocale) => {
       locale = newLocale;
       pairingController?.setLocale(newLocale);
-      appEl.innerHTML = renderTileGrid(store.getTiles(), locale, socketStatus);
+      intakeController?.setLocale(newLocale);
+      rerender();
     },
     locale,
     (chargeNurse, shiftKey) => shiftStore.setShift(chargeNurse, shiftKey)
